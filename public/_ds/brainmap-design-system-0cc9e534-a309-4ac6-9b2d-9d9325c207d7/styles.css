@@ -1,0 +1,10 @@
+/* Brainmap Design System — Root CSS Entry
+   Import this single file to consume all tokens.
+   No rules here — only @imports. */
+
+@import 'tokens/colors.css';
+@import 'tokens/typography.css';
+@import 'tokens/spacing.css';
+@import 'tokens/shadows.css';
+@import 'tokens/radii.css';
+@import 'tokens/motion.css';

@@ -1,0 +1,16 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import AIApp from '../../components/AIApp.jsx';
+import { getImage } from 'astro:assets';
+import heroSrc from '../../assets/images/ai-hero-portrait-2.jpg';
+
+const heroOptimized = await getImage({ src: heroSrc, format: 'webp', quality: 82, width: 2400 });
+const heroImage = {
+  src: heroOptimized.src,
+  width: heroOptimized.attributes.width,
+  height: heroOptimized.attributes.height,
+};
+---
+<Layout title="Alfabetización IA — Brainmap">
+  <AIApp heroImage={heroImage} client:load />
+</Layout>

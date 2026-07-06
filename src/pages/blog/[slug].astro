@@ -1,0 +1,44 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import BlogPostApp, { NotFoundPage } from '../../components/BlogPostApp.jsx';
+import { fetchPosts, fetchPostBySlug, fetchRelatedPosts } from '../../lib/blog-data.js';
+
+export async function getStaticPaths() {
+  const { items } = await fetchPosts({ perPage: 1000 });
+  return items.map((post) => ({ params: { slug: post.slug } }));
+}
+
+const { slug } = Astro.params;
+const post = await fetchPostBySlug(slug);
+const related = post ? await fetchRelatedPosts(post, 3) : [];
+---
+<Layout title={post ? `${post.title} — Blog brainmap` : 'Blog — Brainmap'}>
+  {post ? (
+    <BlogPostApp post={post} related={related} client:load />
+  ) : (
+    <NotFoundPage client:load />
+  )}
+</Layout>
+
+<style>
+  /* ── .wp-content ─────────────────────────────────────────
+     Estilos para el HTML "tal cual" que WordPress entrega en
+     content.rendered (Gutenberg / editor clásico). En producción
+     este bloque debe mantenerse: WP no aplica su propio CSS al
+     insertarse dentro del theme, así que este es el contrato
+     tipográfico entre el CMS y la marca. */
+  :global(.wp-content) { font-family: var(--font-body); font-size:17px; line-height:1.75; color:var(--color-text-secondary); }
+  :global(.wp-content p) { margin:0 0 22px; }
+  :global(.wp-content h2) { font-family:var(--font-display); font-size:clamp(24px,3vw,32px); font-weight:700; letter-spacing:-0.03em; line-height:1.25; color:var(--color-text-primary); margin:48px 0 20px; }
+  :global(.wp-content h3) { font-family:var(--font-subtitle); font-size:20px; font-weight:600; letter-spacing:-0.015em; line-height:1.3; color:var(--color-text-primary); margin:36px 0 16px; }
+  :global(.wp-content ul), :global(.wp-content ol) { margin:0 0 22px; padding-left:22px; }
+  :global(.wp-content li) { margin-bottom:10px; }
+  :global(.wp-content blockquote) { margin:36px 0; padding:2px 0 2px 24px; border-left:3px solid var(--color-accent); font-family:var(--font-subtitle); font-size:19px; font-weight:500; letter-spacing:-0.01em; line-height:1.5; color:var(--color-text-primary); }
+  :global(.wp-content strong) { color:var(--color-text-primary); font-weight:600; }
+  :global(.wp-content a) { color:var(--color-text-accent); text-decoration:underline; text-decoration-color:var(--color-border-accent); text-underline-offset:3px; }
+  :global(.wp-content img) { max-width:100%; height:auto; border-radius:var(--radius-xl); margin:8px 0; display:block; }
+  :global(.wp-content figcaption) { font-family:var(--font-body); font-size:13px; color:var(--color-text-muted); margin-top:8px; text-align:center; }
+  :global(.wp-content hr) { border:none; border-top:1px solid var(--color-border); margin:40px 0; }
+  :global(.wp-content table) { width:100%; border-collapse:collapse; margin:0 0 22px; font-size:15px; }
+  :global(.wp-content table th), :global(.wp-content table td) { border:1px solid var(--color-border); padding:10px 14px; text-align:left; }
+</style>

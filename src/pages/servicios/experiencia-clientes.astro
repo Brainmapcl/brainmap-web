@@ -1,0 +1,16 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import CXApp from '../../components/CXApp.jsx';
+import { getImage } from 'astro:assets';
+import heroSrc from '../../assets/images/cx-hero-portrait-1.jpg';
+
+const heroOptimized = await getImage({ src: heroSrc, format: 'webp', quality: 82, width: 2400 });
+const heroImage = {
+  src: heroOptimized.src,
+  width: heroOptimized.attributes.width,
+  height: heroOptimized.attributes.height,
+};
+---
+<Layout title="Experiencia de Clientes y Diseño del Futuro — Brainmap">
+  <CXApp heroImage={heroImage} client:load />
+</Layout>

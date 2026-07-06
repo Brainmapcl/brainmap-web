@@ -1,0 +1,58 @@
+/* ==============================================
+   Brainmap Typography Tokens
+   
+   ⚠ FONT SUBSTITUTION NOTE:
+   Brief specifies "Clash Display" for H1/H2.
+   Clash Display is not on Google Fonts.
+   Using Space Grotesk 700 as the closest match.
+   Provide Clash Display .woff2 files to replace.
+   Plus Jakarta Sans + Inter match exactly.
+   ============================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Space+Grotesk:wght@400;500;600;700&family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;1,400&family=Inter:wght@400;500&display=swap');
+
+:root {
+  /* ── Font Families ───────────────────────── */
+  --font-display:   'Space Grotesk', system-ui, sans-serif;     /* H1, H2 */
+  --font-subtitle:  'Plus Jakarta Sans', system-ui, sans-serif; /* H3, labels */
+  --font-body:      'Inter', system-ui, sans-serif;             /* body, data */
+  --font-mono:      ui-monospace, 'JetBrains Mono', monospace;  /* code */
+
+  /* ── Size Scale (fluid-ready rem) ────────── */
+  --text-xs:    0.6875rem;   /*  11px */
+  --text-sm:    0.8125rem;   /*  13px */
+  --text-base:  0.9375rem;   /*  15px */
+  --text-md:    1rem;        /*  16px */
+  --text-lg:    1.125rem;    /*  18px */
+  --text-xl:    1.25rem;     /*  20px */
+  --text-2xl:   1.5rem;      /*  24px */
+  --text-3xl:   1.875rem;    /*  30px */
+  --text-4xl:   2.25rem;     /*  36px */
+  --text-5xl:   3rem;        /*  48px */
+  --text-6xl:   3.75rem;     /*  60px */
+  --text-7xl:   4.5rem;      /*  72px */
+  --text-8xl:   6rem;        /*  96px */
+
+  /* ── Font Weights ────────────────────────── */
+  --weight-regular:   400;
+  --weight-medium:    500;
+  --weight-semibold:  600;
+  --weight-bold:      700;
+
+  /* ── Line Heights ────────────────────────── */
+  --leading-none:     1;
+  --leading-tight:    1.08;
+  --leading-snug:     1.22;
+  --leading-normal:   1.45;
+  --leading-relaxed:  1.62;
+  --leading-loose:    1.8;
+
+  /* ── Letter Spacing ──────────────────────── */
+  --tracking-tightest: -0.04em;
+  --tracking-tight:    -0.025em;
+  --tracking-snug:     -0.01em;
+  --tracking-normal:    0em;
+  --tracking-wide:      0.04em;
+  --tracking-wider:     0.08em;
+  --tracking-widest:    0.15em;
+}

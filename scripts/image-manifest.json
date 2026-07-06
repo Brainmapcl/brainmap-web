@@ -1,0 +1,47 @@
+{
+  "/assets/logo-brainmap-clean.png": {
+    "webp": "/assets/logo-brainmap-clean.webp",
+    "width": 2048,
+    "height": 2048
+  },
+  "/assets/hero-editorial.png": {
+    "webp": "/assets/hero-editorial.webp",
+    "width": 2752,
+    "height": 1536
+  },
+  "/assets/team-rodrigo.jpeg": {
+    "webp": "/assets/team-rodrigo.webp",
+    "width": 1600,
+    "height": 1600
+  },
+  "/assets/team-ivan.png": {
+    "webp": "/assets/team-ivan.webp",
+    "width": 2048,
+    "height": 2048
+  },
+  "/_ds/brainmap-design-system-0cc9e534-a309-4ac6-9b2d-9d9325c207d7/assets/imagery/texture-arch-lattice.jpg": {
+    "webp": "/_ds/brainmap-design-system-0cc9e534-a309-4ac6-9b2d-9d9325c207d7/assets/imagery/texture-arch-lattice.webp",
+    "width": 8064,
+    "height": 5376
+  },
+  "/_ds/brainmap-design-system-0cc9e534-a309-4ac6-9b2d-9d9325c207d7/assets/imagery/portrait-2.jpg": {
+    "webp": "/_ds/brainmap-design-system-0cc9e534-a309-4ac6-9b2d-9d9325c207d7/assets/imagery/portrait-2.webp",
+    "width": 3584,
+    "height": 5376
+  },
+  "/_ds/brainmap-design-system-0cc9e534-a309-4ac6-9b2d-9d9325c207d7/assets/imagery/portrait-1.jpg": {
+    "webp": "/_ds/brainmap-design-system-0cc9e534-a309-4ac6-9b2d-9d9325c207d7/assets/imagery/portrait-1.webp",
+    "width": 3584,
+    "height": 5376
+  },
+  "/_ds/brainmap-design-system-0cc9e534-a309-4ac6-9b2d-9d9325c207d7/assets/imagery/texture-structural.jpg": {
+    "webp": "/_ds/brainmap-design-system-0cc9e534-a309-4ac6-9b2d-9d9325c207d7/assets/imagery/texture-structural.webp",
+    "width": 3810,
+    "height": 4763
+  },
+  "/_ds/brainmap-design-system-0cc9e534-a309-4ac6-9b2d-9d9325c207d7/assets/imagery/texture-arch-warm.jpg": {
+    "webp": "/_ds/brainmap-design-system-0cc9e534-a309-4ac6-9b2d-9d9325c207d7/assets/imagery/texture-arch-warm.webp",
+    "width": 8064,
+    "height": 5376
+  }
+}

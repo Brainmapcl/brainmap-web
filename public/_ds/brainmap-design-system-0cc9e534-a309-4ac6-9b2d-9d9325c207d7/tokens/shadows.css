@@ -1,0 +1,40 @@
+/* ==============================================
+   Brainmap Shadow Tokens
+   
+   Three systems: neumorphic, elevation, glass
+   Base canvas: #FBFBFA — light source top-left
+   ============================================== */
+
+:root {
+  /* ── Neumorphic (sculpted on warm white) ─── */
+  --shadow-neumorph-xs:     2px 2px 5px rgba(0,0,0,0.05), -1px -1px 3px rgba(255,255,255,0.85);
+  --shadow-neumorph-sm:     3px 3px 8px rgba(0,0,0,0.07), -2px -2px 5px rgba(255,255,255,0.9);
+  --shadow-neumorph:        5px 5px 12px rgba(0,0,0,0.08), -3px -3px 7px rgba(255,255,255,0.92);
+  --shadow-neumorph-lg:     8px 8px 20px rgba(0,0,0,0.1), -5px -5px 10px rgba(255,255,255,0.95);
+  --shadow-neumorph-inset:  inset 3px 3px 7px rgba(0,0,0,0.07), inset -2px -2px 5px rgba(255,255,255,0.85);
+  --shadow-neumorph-inset-lg: inset 5px 5px 12px rgba(0,0,0,0.09), inset -3px -3px 8px rgba(255,255,255,0.9);
+
+  /* ── Elevation (traditional depth) ──────── */
+  --shadow-sm:    0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+  --shadow-md:    0 4px 16px rgba(0,0,0,0.08), 0 2px 6px rgba(0,0,0,0.04);
+  --shadow-lg:    0 8px 32px rgba(0,0,0,0.1), 0 3px 12px rgba(0,0,0,0.05);
+  --shadow-xl:    0 16px 48px rgba(0,0,0,0.12), 0 6px 20px rgba(0,0,0,0.06);
+  --shadow-2xl:   0 24px 64px rgba(0,0,0,0.14), 0 8px 28px rgba(0,0,0,0.07);
+
+  /* ── Glassmorphic ────────────────────────── */
+  --glass-bg:          rgba(251, 251, 250, 0.85);
+  --glass-bg-solid:    rgba(251, 251, 250, 0.96);
+  --glass-border:      1px solid rgba(255, 255, 255, 0.65); /* @kind other */
+  --glass-border-base: 1px solid rgba(30, 30, 31, 0.06); /* @kind other */
+  --glass-blur:        blur(18px) saturate(180%); /* @kind other */
+  --glass-shadow:      0 4px 24px rgba(0,0,0,0.08), 0 1px 6px rgba(0,0,0,0.04);
+
+  /* ── Accent Glow (coral halo) ────────────── */
+  --shadow-glow-sm:   0 0 18px rgba(243, 169, 139, 0.22);
+  --shadow-glow:      0 0 40px rgba(243, 169, 139, 0.25), 0 0 16px rgba(243, 169, 139, 0.14);
+  --shadow-glow-lg:   0 0 64px rgba(243, 169, 139, 0.3), 0 0 28px rgba(243, 169, 139, 0.16);
+
+  /* Legacy aliases used by components */
+  --shadow-accent-glow-sm: var(--shadow-glow-sm);
+  --shadow-accent-glow:    var(--shadow-glow);
+}

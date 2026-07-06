@@ -1,0 +1,19 @@
+---
+import Layout from '../layouts/Layout.astro';
+import HomeApp from '../components/HomeApp.jsx';
+import { getImage } from 'astro:assets';
+import heroSrc from '../assets/images/hero-editorial.png';
+
+// LCP hero image: build-time resize + format negotiation via Astro's asset
+// pipeline, instead of the plain /public webp fallback baked into home.jsx.
+const heroOptimized = await getImage({ src: heroSrc, format: 'webp', quality: 82, width: 2400 });
+const heroImage = {
+  src: heroOptimized.src,
+  width: heroOptimized.attributes.width,
+  height: heroOptimized.attributes.height,
+};
+---
+
+<Layout title="Brainmap — Ingeniería Empática · Automatización y CX">
+  <HomeApp heroImage={heroImage} client:load />
+</Layout>

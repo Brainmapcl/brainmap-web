@@ -1,0 +1,55 @@
+/* ==============================================
+   Brainmap Color Tokens — "Warm White Tech"
+   ============================================== */
+
+:root {
+  /* ── Canvas & Surfaces ───────────────────── */
+  --color-canvas:           #FBFBFA;   /* warm white matte — main background */
+  --color-canvas-subtle:    #F5F4F1;   /* deeper warm white — inset areas, sections */
+  --color-canvas-elevated:  #FFFFFF;   /* pure white — elevated cards */
+  --color-canvas-overlay:   rgba(251, 251, 250, 0.88);
+
+  /* ── Text ────────────────────────────────── */
+  --color-text-primary:     #1E1E1F;   /* chalk-dark graphite — headlines, high contrast */
+  --color-text-secondary:   #606266;   /* soft neutral gray — body copy, descriptions */
+  --color-text-muted:       #9B9DA3;   /* muted gray — captions, placeholders */
+  --color-text-inverse:     #FFFFFF;   /* white — text on dark/accent fills */
+  --color-text-accent:      #F3A98B;   /* coral peach — highlighted phrases, active labels */
+
+  /* ── Accent · Coral Soft / Durazno Tecnológico */
+  --color-accent-50:        #FEF3EE;
+  --color-accent-100:       #FBE8DF;
+  --color-accent-200:       #F7CDB8;
+  --color-accent-300:       #F3A98B;   /* ← primary accent */
+  --color-accent-400:       #ED8462;
+  --color-accent-500:       #E4603B;   /* deep accent — intense emphasis */
+
+  /* Semantic accent aliases */
+  --color-accent:           #F3A98B;
+  --color-accent-subtle:    #FBE8DF;
+  --color-accent-intense:   #E4603B;
+  --color-accent-glow:      rgba(243, 169, 139, 0.18);
+  --color-accent-glow-sm:   rgba(243, 169, 139, 0.12);
+
+  /* ── Metallic Palette ────────────────────── */
+  --color-rose-gold:        #C9956A;   /* warm rose-gold metallic */
+  --color-rose-gold-light:  #E8C4B0;   /* pale rose-gold tint */
+  --color-titanium:         #A8A8AA;   /* cool titanium silver */
+  --color-chrome:           #C8C8C8;   /* polished chrome */
+  --color-chrome-light:     #EAEAE8;   /* light chrome — subtle surfaces */
+  --color-chrome-dark:      #8E8E90;   /* dark chrome — contrast on light */
+
+  /* ── Structural / Borders ────────────────── */
+  --color-border:           rgba(30, 30, 31, 0.07);
+  --color-border-strong:    rgba(30, 30, 31, 0.14);
+  --color-border-accent:    rgba(243, 169, 139, 0.45);
+  --color-border-glass:     rgba(255, 255, 255, 0.65);
+
+  /* ── Semantic Status ─────────────────────── */
+  --color-success:          #1F8A5B;
+  --color-success-subtle:   rgba(31, 138, 91, 0.1);
+  --color-warning:          #D97A20;
+  --color-warning-subtle:   rgba(217, 122, 32, 0.1);
+  --color-error:            #C94545;
+  --color-error-subtle:     rgba(201, 69, 69, 0.1);
+}

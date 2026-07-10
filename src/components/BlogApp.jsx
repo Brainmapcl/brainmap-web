@@ -1,31 +1,29 @@
-/* BlogApp.jsx — root composition for the blog listing page (ported from blog-app.jsx) */
-import { useState, useEffect } from 'react';
+/* BlogApp.jsx — root composition for the blog listing page.
+   SSG completo: `posts` y `categories` llegan ya resueltos desde
+   blog/index.astro (fetch en build-time). No hay fetch en el
+   navegador — el filtro por categoría y la paginación se resuelven
+   en memoria sobre el arreglo ya cargado. */
+import { useState, useMemo } from 'react';
 import { NavBar, Footer, ChatOverlay, ContactSection, useViewport, useKarinChat } from './shared.jsx';
 import { BlogHero, CategoryFilterBar, PostCard, EmptyState, Pagination } from './blog.jsx';
-import { fetchPosts, fetchCategories } from '../lib/blog-data.js';
 
-export default function BlogApp() {
+export default function BlogApp({ posts, categories, postsPerPage = 6 }) {
   const { isMobile } = useViewport();
   const chat = useKarinChat();
 
-  const [categories, setCategories] = useState([]);
-  const [activeCat, setActiveCat]   = useState(null);
-  const [page, setPage]             = useState(1);
-  const [result, setResult]         = useState({ items: [], total: 0, totalPages: 1, page: 1 });
-  const [loading, setLoading]       = useState(true);
+  const [activeCat, setActiveCat] = useState(null);
+  const [page, setPage] = useState(1);
+  const perPage = postsPerPage;
 
-  useEffect(() => { fetchCategories().then(setCategories); }, []);
-
-  useEffect(() => {
-    let alive = true;
-    setLoading(true);
-    fetchPosts({ page, categorySlug: activeCat }).then(res => {
-      if (!alive) return;
-      setResult(res);
-      setLoading(false);
-    });
-    return () => { alive = false; };
-  }, [page, activeCat]);
+  const filtered = useMemo(
+    () => (activeCat ? posts.filter(p => p.category.slug === activeCat) : posts),
+    [posts, activeCat]
+  );
+  const totalPages = Math.max(1, Math.ceil(filtered.length / perPage));
+  const pageItems = useMemo(
+    () => filtered.slice((page - 1) * perPage, page * perPage),
+    [filtered, page, perPage]
+  );
 
   function changeCategory(slug) {
     setActiveCat(slug);
@@ -38,9 +36,9 @@ export default function BlogApp() {
     if (el) window.scrollTo({ top: el.getBoundingClientRect().top + window.scrollY - 88, behavior: 'smooth' });
   }
 
-  const showFeatured = page === 1 && !activeCat && result.items.length > 0;
-  const featured = showFeatured ? result.items[0] : null;
-  const rest = showFeatured ? result.items.slice(1) : result.items;
+  const showFeatured = page === 1 && !activeCat && pageItems.length > 0;
+  const featured = showFeatured ? pageItems[0] : null;
+  const rest = showFeatured ? pageItems.slice(1) : pageItems;
   const cols = isMobile ? '1fr' : 'repeat(3,1fr)';
 
   return (
@@ -52,19 +50,19 @@ export default function BlogApp() {
         <div style={{ maxWidth:1280, margin:'0 auto' }}>
           <CategoryFilterBar categories={categories} active={activeCat} onChange={changeCategory} />
 
-          {!loading && featured && <PostCard post={featured} featured />}
+          {featured && <PostCard post={featured} featured />}
 
-          {!loading && rest.length > 0 && (
+          {rest.length > 0 && (
             <div style={{ display:'grid', gridTemplateColumns: cols, gap:24 }}>
               {rest.map(p => <PostCard key={p.slug} post={p} />)}
             </div>
           )}
 
-          {!loading && result.items.length === 0 && (
+          {pageItems.length === 0 && (
             <EmptyState message={activeCat ? 'Aún no hay artículos publicados en esta categoría.' : 'Aún no hay artículos publicados. Vuelve pronto.'} />
           )}
 
-          <Pagination page={result.page} totalPages={result.totalPages} onChange={changePage} />
+          <Pagination page={page} totalPages={totalPages} onChange={changePage} />
         </div>
       </section>
 

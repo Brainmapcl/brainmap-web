@@ -1,7 +1,15 @@
 ---
 import Layout from '../../layouts/Layout.astro';
 import BlogApp from '../../components/BlogApp.jsx';
+import { fetchPosts, fetchCategories, WP_CONFIG } from '../../lib/blog-data.js';
+
+// SSG completo: se trae TODO el listado en build-time (WP_CONFIG.POSTS_PER_PAGE
+// solo gobierna cuántos se muestran por página en el cliente, ya en memoria —
+// no hay una segunda llamada de red al cambiar de página o de categoría).
+const { items: posts } = await fetchPosts({ perPage: 1000 });
+const categories = await fetchCategories();
 ---
+
 <Layout title="Blog — Brainmap">
-  <BlogApp client:load />
+  <BlogApp posts={posts} categories={categories} postsPerPage={WP_CONFIG.POSTS_PER_PAGE} client:load />
 </Layout>

@@ -1,8 +1,9 @@
 /* HomeApp.jsx — root composition for the home page (ported from home-app.jsx) */
+import { NavBar, Footer, ChatOverlay, useKarinChat } from './shared.jsx';
 import {
-  NavBar, HeroSection, DiagnosisSection,
+  HeroSection, DiagnosisSection,
   ServicesSection, AdvancedGridSection,
-  ContactSection, ChatOverlay, Footer, useKarinChat,
+  ContactSection,
 } from './home.jsx';
 
 export default function HomeApp({ heroImage }) {
@@ -10,7 +11,7 @@ export default function HomeApp({ heroImage }) {
 
   return (
     <>
-      <NavBar />
+      <NavBar badge="Escalabilidad & Agencia IA" />
       <HeroSection heroImage={heroImage} />
       <DiagnosisSection />
       <ServicesSection />

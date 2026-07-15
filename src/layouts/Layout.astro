@@ -29,8 +29,8 @@ const { title } = Astro.props;
 
   <style is:global>
     *, *::before, *::after { box-sizing: border-box; }
-    body  { margin: 0; background: var(--color-canvas); }
-    html  { scroll-behavior: smooth; }
+    html  { scroll-behavior: smooth; overflow-x: hidden; }
+    body  { margin: 0; background: var(--color-canvas); overflow-x: hidden; max-width: 100vw; }
     input, textarea, button { font-family: inherit; }
 
     @keyframes fadeIn  { from { opacity: 0 }              to { opacity: 1 } }

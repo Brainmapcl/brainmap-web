@@ -54,7 +54,7 @@ export function useViewport() {
    NAV BAR — glassmorphic sticky (subpage mode: links back to
    the sections of the home page, "Contacto" scrolls local)
 ══════════════════════════════════════════════════════════ */
-export function NavBar({ breadcrumb }) {
+export function NavBar({ breadcrumb, badge }) {
   const { isMobile } = useViewport();
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
@@ -124,6 +124,14 @@ export function NavBar({ breadcrumb }) {
               color:'var(--color-text-muted)', whiteSpace:'nowrap', overflow:'hidden', textOverflow:'ellipsis',
             }}>{breadcrumb}</span>
           </>
+        )}
+        {badge && !isMobile && (
+          <span style={{ fontFamily:'var(--font-body)', fontSize:10, fontWeight:500,
+                          letterSpacing:'.05em', color:'var(--color-text-muted)',
+                          border:'1px solid var(--color-border)', borderRadius:4, padding:'2px 7px',
+                          marginLeft:2, whiteSpace:'nowrap' }}>
+            {badge}
+          </span>
         )}
       </div>
 

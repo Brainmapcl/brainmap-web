@@ -383,6 +383,9 @@ export function ContactSection({ chat }) {
 
   function submit(e) {
     e.preventDefault();
+    if (typeof fbq !== 'undefined') {
+      fbq('track', 'Lead');
+    }
     setSent(true);
     setTimeout(() => chat.startChat(form), 900);
   }

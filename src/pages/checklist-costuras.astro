@@ -1,0 +1,383 @@
+---
+// Landing standalone del lead magnet "Checklist de Diagnóstico de Costuras".
+// A propósito NO usa src/layouts/Layout.astro: esa página trae el <nav> del
+// home, que no debe aparecer en una landing de conversión aislada. Por eso
+// se repiten aquí, a mano, sólo las dos piezas de Layout.astro que sí
+// necesita: los tokens de diseño y el snippet de Meta Pixel.
+import { DS_BASE } from '../lib/constants';
+
+const WEBHOOK_URL = 'https://brainmap-n8n2.onq6ef.easypanel.host/webhook/checklist-costuras';
+---
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Checklist de Diagnóstico de Costuras — Brainmap</title>
+<meta name="description" content="Checklist gratuito de 15 preguntas para ubicar dónde tu empresa pierde clientes entre sistemas, antes de automatizar más. Para gerencias de CX y operaciones en Chile.">
+<meta property="og:title" content="Checklist de Diagnóstico de Costuras — Brainmap">
+<meta property="og:description" content="Dónde tu empresa pierde clientes entre sistemas, y cómo detectarlo antes de automatizar más. Descarga gratuita.">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="es_CL">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect width='24' height='24' rx='6' fill='%231E1E1F'/%3E%3Cpath d='M4 12h4l2-6 4 12 2-6h4' stroke='white' stroke-width='2' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+
+<link rel="stylesheet" href={`${DS_BASE}/tokens/colors.css`} />
+<link rel="stylesheet" href={`${DS_BASE}/tokens/typography.css`} />
+<link rel="stylesheet" href={`${DS_BASE}/tokens/spacing.css`} />
+<link rel="stylesheet" href={`${DS_BASE}/tokens/shadows.css`} />
+<link rel="stylesheet" href={`${DS_BASE}/tokens/radii.css`} />
+<link rel="stylesheet" href={`${DS_BASE}/tokens/motion.css`} />
+
+<style>
+  *,*::before,*::after{box-sizing:border-box}
+  html{overflow-x:hidden}
+  body{margin:0;background:var(--color-canvas);font-family:var(--font-body);color:var(--color-text-primary);-webkit-font-smoothing:antialiased;overflow-x:hidden;max-width:100vw}
+  img,video{max-width:100%;display:block}
+  .wrap{max-width:1100px;margin:0 auto;padding:0 32px}
+  @media (max-width:720px){.wrap{padding:0 20px}}
+
+  /* seam motif — the signature element */
+  .seam{
+    position:relative; height:64px; margin:0 auto; max-width:1100px;
+    display:flex; align-items:center; justify-content:center;
+  }
+  .seam svg{width:100%;height:24px; overflow:visible}
+  .seam .seam-line{
+    stroke-dasharray:10 8; transform-box:fill-box; transform-origin:0% 50%;
+    transform:scaleX(0); transition:transform 1s var(--ease-out, ease);
+  }
+  .seam.in-view .seam-line{transform:scaleX(1)}
+  .seam .seam-label{
+    position:absolute; background:var(--color-canvas); padding:0 18px;
+    font-family:var(--font-mono); font-size:11px; letter-spacing:.14em;
+    text-transform:uppercase; color:var(--color-text-muted);
+    opacity:0; transition:opacity .6s ease .5s;
+  }
+  .seam.in-view .seam-label{opacity:1}
+
+  .reveal{opacity:0; transform:translateY(16px); transition:opacity .6s ease, transform .6s ease}
+  .reveal.in-view{opacity:1; transform:none}
+  @media (prefers-reduced-motion: reduce){
+    .seam .seam-line, .seam .seam-label, .reveal{transition:none; opacity:1; transform:none}
+  }
+
+  /* eyebrow badge */
+  .eyebrow{
+    display:inline-flex; align-items:center; gap:8px;
+    font-family:var(--font-body); font-size:11px; font-weight:600;
+    letter-spacing:.08em; text-transform:uppercase; color:var(--color-accent-intense);
+    background:var(--color-accent-subtle); border:1px solid var(--color-border-accent);
+    padding:5px 14px; border-radius:var(--radius-full);
+  }
+
+  /* HERO */
+  .hero{padding:76px 0 48px}
+  .hero-grid{display:grid; grid-template-columns:1.1fr .9fr; gap:64px; align-items:center}
+  @media (max-width:900px){.hero-grid{grid-template-columns:1fr; gap:40px}}
+  .logo{display:flex;align-items:center;gap:10px;margin-bottom:56px}
+  .logo-mark{width:34px;height:34px;border-radius:9px;background:var(--color-text-primary);display:flex;align-items:center;justify-content:center}
+  .logo-mark svg{width:18px;height:18px}
+  .logo-word{font-family:var(--font-display);font-weight:600;font-size:19px;letter-spacing:-0.02em}
+  h1{
+    font-family:var(--font-display); font-weight:600; letter-spacing:-0.02em;
+    font-size:clamp(34px,4.4vw,52px); line-height:1.08; margin:20px 0 22px;
+  }
+  h1 em{font-style:italic; color:var(--color-text-accent)}
+  .hero-sub{font-size:17px; line-height:1.6; color:var(--color-text-secondary); max-width:460px; margin:0 0 32px}
+  .btn-hero{
+    display:inline-flex; align-items:center; gap:8px; font-family:var(--font-body); font-weight:600; font-size:15px;
+    color:#fff; background:var(--color-text-primary); border-radius:var(--radius-full); padding:15px 30px;
+    text-decoration:none; box-shadow:0 4px 20px rgba(30,30,31,.18); margin-bottom:34px;
+    transition:transform .18s ease, box-shadow .18s ease;
+  }
+  .btn-hero:hover{transform:translateY(-2px); box-shadow:0 8px 28px rgba(30,30,31,.24)}
+  .stat-row{display:flex; gap:28px; margin-top:8px; flex-wrap:wrap}
+  .stat{display:flex; flex-direction:column; gap:2px}
+  .stat b{font-family:var(--font-display); font-size:30px; color:var(--color-text-accent); line-height:1}
+  .stat span{font-size:12px; color:var(--color-text-muted); max-width:150px; line-height:1.35}
+
+  /* PDF preview card */
+  .pdf-card{
+    background:var(--color-canvas-elevated); border-radius:var(--radius-2xl);
+    box-shadow:var(--shadow-lg); padding:20px; position:relative;
+  }
+  .pdf-cover{
+    aspect-ratio:3/4; border-radius:var(--radius-lg); overflow:hidden; position:relative;
+    background:linear-gradient(160deg,var(--color-canvas) 0%,var(--color-accent-50, #FEF3EE) 60%,var(--color-accent-100, #FBE8DF) 100%);
+    display:flex; flex-direction:column; justify-content:space-between; padding:26px;
+  }
+  .pdf-cover .arc{position:absolute;inset:0;opacity:.5;pointer-events:none}
+  .pdf-cover-top{position:relative;z-index:1;display:flex;justify-content:space-between;align-items:flex-start}
+  .pdf-cover-top .brand{font-family:var(--font-display);font-weight:600;font-size:14px}
+  .pdf-cover-top .tag{font-family:var(--font-mono);font-size:8px;letter-spacing:.1em;color:var(--color-text-muted);text-align:right;line-height:1.5}
+  .pdf-cover-bottom{position:relative;z-index:1}
+  .pdf-cover-bottom .badge{font-family:var(--font-mono);font-size:8px;letter-spacing:.1em;text-transform:uppercase;background:var(--color-accent-subtle);color:var(--color-accent-intense);padding:3px 8px;border-radius:6px;display:inline-block;margin-bottom:10px}
+  .pdf-cover-bottom h3{font-family:var(--font-display);font-size:22px;line-height:1.1;margin:0 0 8px;font-weight:600}
+  .pdf-cover-bottom p{font-size:10px;color:var(--color-text-secondary);line-height:1.4;margin:0}
+  .pdf-meta{display:flex;justify-content:space-between;align-items:center;padding:14px 6px 4px;font-size:12px;color:var(--color-text-muted)}
+  .pdf-meta b{color:var(--color-text-primary)}
+
+  /* costuras section */
+  .costuras{padding:56px 0 64px}
+  .costuras-head{max-width:640px;margin:0 auto 40px;text-align:center}
+  h2{font-family:var(--font-display);font-weight:600;font-size:clamp(26px,3vw,36px);letter-spacing:-0.02em;line-height:1.15;margin:14px 0 12px}
+  .costuras-head p{color:var(--color-text-secondary);font-size:15px;line-height:1.6;margin:0}
+  .costuras-list{display:grid;grid-template-columns:repeat(5,1fr);gap:14px}
+  @media (max-width:900px){.costuras-list{grid-template-columns:repeat(2,1fr)}}
+  @media (max-width:520px){.costuras-list{grid-template-columns:1fr}}
+  .costura-item{
+    background:var(--color-canvas-elevated); border:1px solid var(--color-border);
+    border-radius:var(--radius-lg); padding:18px 16px;
+  }
+  .costura-item .n{font-family:var(--font-mono);font-size:10px;color:var(--color-accent-intense);letter-spacing:.1em}
+  .costura-item h4{font-family:var(--font-body);font-weight:600;font-size:14px;margin:8px 0 4px}
+  .costura-item p{font-size:12.5px;color:var(--color-text-muted);line-height:1.5;margin:0}
+
+  /* form section */
+  .form-section{padding:0 0 88px}
+  .form-card{
+    background:var(--color-canvas-elevated); border-radius:var(--radius-2xl);
+    box-shadow:var(--shadow-lg); padding:44px; max-width:560px; margin:0 auto;
+  }
+  @media (max-width:600px){.form-card{padding:28px}}
+  .form-card h2{text-align:center;font-size:26px;margin-top:8px}
+  .form-card .sub{text-align:center;color:var(--color-text-secondary);font-size:14.5px;line-height:1.55;margin:0 0 28px}
+  .field{display:flex;flex-direction:column;gap:6px;margin-bottom:16px}
+  .field label{font-size:12.5px;font-weight:500;color:var(--color-text-secondary)}
+  .field label .opt{font-weight:400;color:var(--color-text-muted)}
+  .privacy-note{font-size:11.5px;color:var(--color-text-muted);text-align:center;line-height:1.5;margin:12px 0 0}
+  .field input{
+    font-family:var(--font-body);font-size:15px;color:var(--color-text-primary);
+    background:var(--color-canvas);border:1.5px solid transparent;border-radius:var(--radius-input);
+    padding:13px 16px;outline:none;box-shadow:var(--shadow-neumorph-inset);
+  }
+  .field input:focus{border-color:var(--color-accent)}
+
+  /* Honeypot — visualmente invisible, fuera del tab order, para atrapar bots
+     que autocompletan todos los campos de un formulario (los humanos nunca
+     ven ni llenan este campo). */
+  .hp-field{
+    position:absolute; left:-9999px; top:-9999px;
+    width:1px; height:1px; opacity:0; overflow:hidden; pointer-events:none;
+  }
+
+  .btn-primary{
+    width:100%;font-family:var(--font-body);font-weight:600;font-size:15px;color:#fff;
+    background:var(--color-text-primary);border:none;border-radius:var(--radius-full);
+    padding:16px;cursor:pointer;box-shadow:0 4px 20px rgba(30,30,31,.18);margin-top:6px;
+    transition:transform .18s ease, box-shadow .18s ease;
+  }
+  .btn-primary:hover{transform:translateY(-2px); box-shadow:0 8px 26px rgba(30,30,31,.24)}
+  .btn-primary:disabled{opacity:.6; cursor:not-allowed; transform:none; box-shadow:0 4px 20px rgba(30,30,31,.18)}
+  .trust-row{display:flex;justify-content:center;gap:18px;margin-top:18px;flex-wrap:wrap}
+  .trust-row span{font-size:11.5px;color:var(--color-text-muted);display:flex;align-items:center;gap:6px}
+  .trust-row .dot{width:5px;height:5px;border-radius:50%;background:var(--color-accent)}
+
+  .form-error{
+    display:none; background:var(--color-error-subtle); color:var(--color-error);
+    border:1px solid var(--color-error); border-radius:var(--radius-md, 12px);
+    padding:12px 16px; font-size:13.5px; line-height:1.5; margin:0 0 16px; text-align:center;
+  }
+
+  footer{padding:28px 0;border-top:1px solid var(--color-border);text-align:center}
+  footer p{font-size:12px;color:var(--color-text-muted);margin:0}
+</style>
+
+<!-- Meta Pixel Code (copiado de src/layouts/Layout.astro — esta página no
+     hereda el layout global, así que no hereda el pixel tampoco) -->
+<script>
+!function(f,b,e,v,n,t,s)
+{if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+n.queue=[];t=b.createElement(e);t.async=!0;
+t.src=v;s=b.getElementsByTagName(e)[0];
+s.parentNode.insertBefore(t,s)}(window, document,'script',
+'https://connect.facebook.net/en_US/fbevents.js');
+fbq('init', '1086272037394340');
+fbq('track', 'PageView');
+</script>
+<noscript><img height="1" width="1" style="display:none"
+src="https://www.facebook.com/tr?id=1086272037394340&ev=PageView&noscript=1"
+/></noscript>
+<!-- End Meta Pixel Code -->
+</head>
+<body>
+
+<div class="wrap">
+  <div class="hero">
+    <div class="logo">
+      <div class="logo-mark">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M4 12h4l2-6 4 12 2-6h4" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </div>
+      <span class="logo-word">brainmap</span>
+    </div>
+
+    <div class="hero-grid">
+      <div>
+        <span class="eyebrow">Guía de autodiagnóstico · gratis</span>
+        <h1>¿Dónde se está<br>rompiendo la <em>costura</em><br>con tus clientes?</h1>
+        <p class="hero-sub">Un checklist de 15 preguntas para ubicar, en menos de 10 minutos, en cuál de las 5 costuras entre sistemas tu empresa está perdiendo clientes — antes de automatizar algo más.</p>
+
+        <a href="#form-section" class="btn-hero">Quiero mi checklist gratis</a>
+
+        <div class="stat-row">
+          <div class="stat"><b>96%</b><span>de clientes con interacciones de alto esfuerzo son más propensos a irse (Gartner)</span></div>
+          <div class="stat"><b>73%</b><span>de proyectos de automatización fracasa por automatizar un proceso roto (McKinsey)</span></div>
+          <div class="stat"><b>7%</b><span>de los centros de contacto logra transferir contexto entre canales (Gartner)</span></div>
+        </div>
+      </div>
+
+      <div class="pdf-card">
+        <div class="pdf-cover">
+          <svg class="arc" viewBox="0 0 300 300" fill="none">
+            <circle cx="300" cy="300" r="80" style="stroke:var(--color-accent-intense)" stroke-opacity="0.25"/>
+            <circle cx="300" cy="300" r="130" style="stroke:var(--color-text-muted)" stroke-opacity="0.18"/>
+            <circle cx="300" cy="300" r="180" style="stroke:var(--color-accent-intense)" stroke-opacity="0.12"/>
+          </svg>
+          <div class="pdf-cover-top">
+            <span class="brand">brainmap</span>
+            <span class="tag">INGENIERÍA EMPÁTICA<br>AUTOMATIZACIÓN · CX/EX · IA</span>
+          </div>
+          <div class="pdf-cover-bottom">
+            <span class="badge">Guía de autodiagnóstico</span>
+            <h3>Checklist de diagnóstico de costuras</h3>
+            <p>Dónde tu empresa pierde clientes entre sistemas — y cómo detectarlo antes de automatizar más.</p>
+          </div>
+        </div>
+        <div class="pdf-meta">
+          <span>PDF · <b>6 páginas</b></span>
+          <span>Para gerencias de CX y operaciones</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="seam">
+  <svg viewBox="0 0 1100 24" preserveAspectRatio="none">
+    <line class="seam-line" x1="0" y1="12" x2="1100" y2="12" style="stroke:var(--color-border)" stroke-width="1"/>
+  </svg>
+  <span class="seam-label">5 costuras · 1 diagnóstico</span>
+</div>
+
+<div class="wrap">
+  <div class="costuras reveal">
+    <div class="costuras-head">
+      <span class="eyebrow">El marco</span>
+      <h2>Las 5 costuras que rompen la experiencia</h2>
+      <p>Después de más de 50 proyectos de automatización y CX, identificamos cinco puntos donde la fricción se concentra de forma sistemática.</p>
+    </div>
+    <div class="costuras-list">
+      <div class="costura-item"><span class="n">01</span><h4>Canal</h4><p>El cliente cambia de canal y pierde el hilo.</p></div>
+      <div class="costura-item"><span class="n">02</span><h4>Datos</h4><p>CRM, ERP y soporte no se hablan entre sí.</p></div>
+      <div class="costura-item"><span class="n">03</span><h4>Automatización aislada</h4><p>Cada área automatizó su propio dolor.</p></div>
+      <div class="costura-item"><span class="n">04</span><h4>Adopción de IA</h4><p>Se usa IA sin gobernanza compartida.</p></div>
+      <div class="costura-item"><span class="n">05</span><h4>Experiencia del empleado</h4><p>Si la herramienta es compleja, el cliente paga el costo.</p></div>
+    </div>
+  </div>
+</div>
+
+<div class="seam">
+  <svg viewBox="0 0 1100 24" preserveAspectRatio="none">
+    <line class="seam-line" x1="0" y1="12" x2="1100" y2="12" style="stroke:var(--color-border)" stroke-width="1"/>
+  </svg>
+  <span class="seam-label">Descarga gratuita</span>
+</div>
+
+<div class="wrap">
+  <div class="form-section reveal" id="form-section">
+    <div class="form-card">
+      <div style="text-align:center"><span class="eyebrow">100% gratis</span></div>
+      <h2>Recibe el checklist en tu correo</h2>
+      <p class="sub">Te lo mandamos al instante en PDF. Sin spam, sin llamadas de venta — solo el diagnóstico.</p>
+
+      <div id="form-error" class="form-error">No pudimos enviar tu checklist. Por favor, inténtalo de nuevo en unos segundos.</div>
+
+      <form id="lead-form" novalidate>
+        <div id="form-fields">
+          <div class="field"><label for="f-nombre">Nombre completo</label><input id="f-nombre" name="nombre" required placeholder="Ej: Andrea González"></div>
+          <div class="field"><label for="f-email">Correo electrónico</label><input id="f-email" name="email" type="email" required placeholder="usuario@empresa.cl"></div>
+          <div class="field"><label for="f-telefono">Teléfono <span class="opt">(opcional — solo si prefieres que te contactemos por ahí)</span></label><input id="f-telefono" name="telefono" type="tel" placeholder="+56 9 1234 5678"></div>
+          <div class="field"><label for="f-empresa">Empresa <span class="opt">(opcional)</span></label><input id="f-empresa" name="empresa" placeholder="Nombre de tu empresa"></div>
+
+          <!-- Honeypot: campo invisible para humanos, name genérico que los bots suelen autocompletar -->
+          <div class="hp-field" aria-hidden="true">
+            <label for="f-website">Website</label>
+            <input id="f-website" name="website" type="text" tabindex="-1" autocomplete="off">
+          </div>
+
+          <button class="btn-primary" type="submit">Descargar el checklist gratis</button>
+          <p class="privacy-note">No compartimos tu información con terceros. Solo la usamos para enviarte el checklist y, si respondes, seguir la conversación.</p>
+        </div>
+        <div id="confirm" style="display:none;text-align:center;padding:20px 0">
+          <div style="font-family:var(--font-display);font-size:20px;margin-bottom:8px">Revisa tu correo ✓</div>
+          <p style="color:var(--color-text-secondary);font-size:14px;margin:0">Te acabamos de enviar el checklist en PDF. Si no lo ves en unos minutos, revisa spam o promociones.</p>
+        </div>
+      </form>
+
+      <div class="trust-row">
+        <span><span class="dot"></span>Sin costo</span>
+        <span><span class="dot"></span>Sin suscripciones</span>
+        <span><span class="dot"></span>Entrega inmediata</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<footer><p>brainmap · Ingeniería Empática · © 2026</p></footer>
+
+<script define:vars={{ WEBHOOK_URL }}>
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('in-view'); });
+  }, { threshold: 0.3 });
+  document.querySelectorAll('.seam, .reveal').forEach(el => io.observe(el));
+
+  const form = document.getElementById('lead-form');
+  const fields = document.getElementById('form-fields');
+  const confirm = document.getElementById('confirm');
+  const errorBox = document.getElementById('form-error');
+  const submitBtn = form.querySelector('.btn-primary');
+  const submitLabel = submitBtn.textContent;
+
+  form.addEventListener('submit', async (event) => {
+    event.preventDefault();
+    errorBox.style.display = 'none';
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Enviando…';
+
+    const payload = {
+      nombre: form.nombre.value.trim(),
+      email: form.email.value.trim(),
+      telefono: form.telefono.value.trim(),
+      empresa: form.empresa.value.trim(),
+      website: form.website.value,
+    };
+
+    if (typeof window.fbq === 'function') {
+      window.fbq('track', 'Lead');
+    }
+
+    try {
+      const res = await fetch(WEBHOOK_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+
+      if (!res.ok) throw new Error('Webhook respondió ' + res.status);
+
+      fields.style.display = 'none';
+      confirm.style.display = 'block';
+      confirm.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    } catch (err) {
+      errorBox.style.display = 'block';
+      submitBtn.disabled = false;
+      submitBtn.textContent = submitLabel;
+    }
+  });
+</script>
+
+</body>
+</html>

@@ -373,11 +373,42 @@ export function AdvancedGridSection() {
 /* ══════════════════════════════════════════════════════════
    CONTACT — Fase 4 / Hub de conversión
 ══════════════════════════════════════════════════════════ */
+const LEAD_LOOKUP_URL  = 'https://brainmap-n8n2.onq6ef.easypanel.host/webhook/lead-lookup';
+const LEAD_RESUMEN_URL = 'https://brainmap-n8n2.onq6ef.easypanel.host/webhook/lead-resumen';
+
 export function ContactSection({ chat }) {
   const [ref, vis] = useReveal(0);
   const { isMobile } = useViewport();
   const [form, setForm]   = useState({ name:'', phone:'', email:'', msg:'' });
   const [sent, setSent]   = useState(false);
+
+  // Continuidad correo → chat: si el visitante llega desde el link de un correo de
+  // nurturing (?lead=<token_publico>), precarga sus datos y un resumen de lo que ya
+  // contó, generado al vuelo (no se cachea; se recalcula en cada carga de página).
+  useEffect(() => {
+    const leadToken = new URLSearchParams(window.location.search).get('lead');
+    if (!leadToken) return;
+
+    let cancelled = false;
+
+    fetch(`${LEAD_LOOKUP_URL}?token=${encodeURIComponent(leadToken)}`)
+      .then(res => (res.ok ? res.json() : null))
+      .then(data => {
+        if (cancelled || !data) return;
+        setForm(f => ({ ...f, name: data.nombre || '', email: data.email || '', phone: data.telefono || '' }));
+      })
+      .catch(() => {});
+
+    fetch(`${LEAD_RESUMEN_URL}?token=${encodeURIComponent(leadToken)}`)
+      .then(res => (res.ok ? res.json() : null))
+      .then(data => {
+        if (cancelled || !data || !data.resumen) return;
+        setForm(f => ({ ...f, msg: data.resumen }));
+      })
+      .catch(() => {});
+
+    return () => { cancelled = true; };
+  }, []);
 
   const set = k => e => setForm(f => ({ ...f, [k]: e.target.value }));
 

@@ -396,16 +396,6 @@ export function ContactSection({ chat }) {
       .then(data => {
         if (cancelled || !data) return;
         setForm(f => ({ ...f, name: data.nombre || '', email: data.email || '', phone: data.telefono || '' }));
-        // El resto de la página sigue animando (reveals on scroll) cuando resuelve
-        // el fetch; un pequeño delay deja que el layout se asiente antes de medir
-        // la posición real del formulario.
-        setTimeout(() => {
-          if (cancelled) return;
-          const el = document.getElementById('hablemos');
-          if (!el) return;
-          const top = el.getBoundingClientRect().top + window.scrollY - 100;
-          window.scrollTo({ top, behavior: 'smooth' });
-        }, 300);
       })
       .catch(() => {});
 

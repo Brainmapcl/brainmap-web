@@ -446,7 +446,7 @@ export function ContactSection({ chat }) {
           background:'var(--color-canvas-elevated)', borderRadius:'var(--radius-2xl)',
           padding: isMobile ? '26px' : '40px', boxShadow:'var(--shadow-lg)',
         }}>
-          <LeadFormFields chat={chat} />
+          <LeadFormFields chat={chat} eventContext="contacto_home" />
         </div>
       </div>
     </section>

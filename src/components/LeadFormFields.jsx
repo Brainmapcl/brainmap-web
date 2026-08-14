@@ -5,7 +5,7 @@
    ───────────────────────────────────────────────────────────── */
 import { useState } from 'react';
 
-export function LeadFormFields({ chat, initialData }) {
+export function LeadFormFields({ chat, initialData, eventContext }) {
   const [form, setForm] = useState(initialData || { name:'', phone:'', email:'', msg:'' });
   const [sent, setSent] = useState(false);
 
@@ -14,7 +14,7 @@ export function LeadFormFields({ chat, initialData }) {
   function submit(e) {
     e.preventDefault();
     if (typeof fbq !== 'undefined') {
-      fbq('track', 'Lead');
+      fbq('track', 'Lead', {content_name: eventContext || 'contacto_generico'});
     }
     setSent(true);
     setTimeout(() => chat.startChat(form), 900);

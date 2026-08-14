@@ -119,7 +119,7 @@ export default function HablemosApp() {
                 background:'var(--color-canvas-elevated)', borderRadius:'var(--radius-2xl)',
                 padding: isMobile ? '24px 20px' : '36px', boxShadow:'var(--shadow-lg)',
               }}>
-                <LeadFormFields chat={chat} initialData={initialData || undefined} />
+                <LeadFormFields chat={chat} initialData={initialData || undefined} eventContext="contacto_hablemos_nurturing" />
               </div>
             </>
           )}

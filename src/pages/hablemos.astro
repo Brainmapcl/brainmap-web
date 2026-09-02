@@ -82,6 +82,17 @@ fbq('track', 'PageView');
 src="https://www.facebook.com/tr?id=1086272037394340&ev=PageView&noscript=1"
 /></noscript>
 <!-- End Meta Pixel Code -->
+
+<!-- Google tag (gtag.js) (copiado de src/layouts/Layout.astro — esta página no
+     hereda el layout global, así que no hereda GA4 tampoco; mismo criterio que
+     checklist-costuras.astro) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-NQLVDYMD3Z"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-NQLVDYMD3Z');
+</script>
 </head>
 <body>
 <HablemosApp client:load />

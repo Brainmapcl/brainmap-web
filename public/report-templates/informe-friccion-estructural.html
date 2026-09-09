@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Informe de Diagnóstico — Fricción estructural</title>
+<link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/fill/style.css">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Space+Grotesk:wght@400;500;600;700&family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;1,400&family=Inter:wght@400;500;600;700&display=swap');
+
+:root{
+  --color-canvas: #FBFBFA;
+  --color-canvas-elevated: #FFFFFF;
+  --color-canvas-subtle: #F5F4F1;
+  --color-text-primary: #1E1E1F;
+  --color-text-secondary: #606266;
+  --color-text-muted: #9B9DA3;
+  --color-text-accent: #F3A98B;
+  --color-accent: #F3A98B;
+  --color-accent-subtle: #FBE8DF;
+  --color-accent-intense: #E4603B;
+  --color-border: #ECECEB;
+  --color-border-accent: #F7D6C8;
+  --font-display: 'Space Grotesk', system-ui, sans-serif;
+  --font-subtitle: 'Plus Jakarta Sans', system-ui, sans-serif;
+  --font-body: 'Inter', system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+  --radius-lg: 16px;
+  --radius-full: 9999px;
+}
+
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; }
+body {
+  font-family: var(--font-body);
+  color: var(--color-text-primary);
+  background: var(--color-canvas);
+  font-size: 10.5pt;
+  line-height: 1.48;
+}
+
+@page { size: A4; margin: 0; }
+
+.page {
+  width: 210mm;
+  height: 297mm;
+  overflow: hidden;
+  padding: 17mm 20mm 16mm;
+  position: relative;
+  page-break-after: always;
+  background:
+    repeating-linear-gradient(115deg, transparent 0 26px, rgba(228,96,59,.04) 26px 27px, transparent 27px 54px),
+    var(--color-canvas);
+}
+.page:last-child { page-break-after: avoid; }
+
+.page-header{
+  display:flex; align-items:center; justify-content:space-between;
+  margin-bottom: 18px; padding-bottom: 9px; border-bottom: 1px solid var(--color-border);
+}
+.logo-word{font-family:var(--font-display); font-weight:600; font-size:15px; letter-spacing:-0.02em}
+.page-tag{font-family:var(--font-mono); font-size:8.5px; letter-spacing:.1em; text-transform:uppercase; color:var(--color-text-muted)}
+
+.eyebrow{
+  display:inline-flex; align-items:center; gap:6px;
+  font-family:var(--font-body); font-size:9px; font-weight:600; letter-spacing:.08em; text-transform:uppercase;
+  color:var(--color-accent-intense); background:var(--color-accent-subtle); border:1px solid var(--color-border-accent);
+  padding:4px 12px; border-radius:var(--radius-full); margin-bottom:14px;
+}
+
+h1{
+  font-family:var(--font-display); font-weight:600; letter-spacing:-0.02em;
+  font-size:30px; line-height:1.08; margin:0 0 6px;
+}
+h1 em{ font-style:italic; color:var(--color-text-accent); }
+.score-line{ font-family:var(--font-body); font-size:13px; color:var(--color-text-secondary); margin:0 0 4px; }
+.score-line b{ font-family:var(--font-display); font-size:16px; color:var(--color-accent-intense); }
+
+.meta-line{
+  font-family:var(--font-mono); font-size:8.5px; color:var(--color-text-muted); letter-spacing:.03em;
+  margin: 10px 0 22px; line-height:1.7;
+}
+
+.lede{
+  font-family:var(--font-display); font-style:italic; font-weight:500; font-size:14.5px;
+  color:var(--color-text-secondary); line-height:1.5; margin: 0 0 22px; max-width: 92%;
+}
+
+h2{
+  font-family:var(--font-display); font-weight:600; font-size:17px; letter-spacing:-0.01em;
+  margin: 20px 0 8px; color: var(--color-text-primary);
+}
+h2:first-of-type{ margin-top: 0; }
+h3{ font-family:var(--font-subtitle); font-weight:700; font-size:11.5px; margin: 14px 0 3px; }
+p{ margin: 0 0 9px; color: var(--color-text-secondary); }
+strong{ color: var(--color-text-primary); }
+
+.case-box{
+  background: var(--color-canvas-elevated); border: 1px solid var(--color-border); border-radius: var(--radius-lg);
+  padding: 14px 16px; margin: 12px 0 4px;
+}
+.case-box .case-label{
+  font-family:var(--font-mono); font-size:8px; letter-spacing:.1em; text-transform:uppercase;
+  color: var(--color-accent-intense); margin-bottom:5px; display:block;
+}
+.case-box p{ margin:0; font-size:10px; }
+
+.zone-list{ display:flex; flex-direction:column; gap:8px; margin: 12px 0 4px; }
+.zone-row{
+  display:flex; align-items:center; gap:14px;
+  background: var(--color-canvas-elevated); border:1px solid var(--color-border); border-radius: var(--radius-lg);
+  padding: 12px 16px;
+}
+.zone-icon{
+  flex-shrink:0; width:30px; height:30px; border-radius:50%; background: var(--color-accent-subtle);
+  display:flex; align-items:center; justify-content:center; color: var(--color-accent-intense); font-size:14px;
+}
+.zone-name{ font-weight:700; font-size:11px; width:135px; flex-shrink:0; }
+.zone-bar-track{
+  flex:1 1 auto; height:6px; background: var(--color-canvas-subtle); border-radius: var(--radius-full); overflow:hidden;
+}
+.zone-bar-fill{ height:100%; background: var(--color-accent-intense); border-radius: var(--radius-full); }
+.zone-result{
+  flex-shrink:0; font-family:var(--font-mono); font-size:9px; letter-spacing:.03em; color: var(--color-text-secondary);
+  background: var(--color-canvas-subtle); padding: 4px 12px; border-radius: var(--radius-full); width:34px; text-align:center;
+}
+
+.title-row{ display:flex; align-items:center; gap:14px; max-width:170mm; }
+.title-col{ flex:0 1 auto; min-width:0; }
+.gauge-wrap{ flex-shrink:0; width:112px; height:112px; position:relative; }
+.gauge-num{
+  position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center;
+}
+.gauge-num b{ font-family:var(--font-display); font-size:26px; color:var(--color-accent-intense); line-height:1; }
+.gauge-num span{ font-family:var(--font-mono); font-size:7.5px; color:var(--color-text-muted); letter-spacing:.05em; margin-top:3px; }
+
+.toc{ margin-top: 24px; }
+.toc-title{ font-family:var(--font-mono); font-size:8px; letter-spacing:.1em; text-transform:uppercase; color:var(--color-text-muted); margin-bottom:10px; }
+.toc-row{ display:flex; align-items:baseline; gap:10px; padding: 6px 0; border-bottom: 1px solid var(--color-border); font-size:10px; }
+.toc-row .toc-page{ font-family:var(--font-mono); font-size:8.5px; color: var(--color-accent-intense); width:14px; flex-shrink:0; }
+.toc-row .toc-label{ color: var(--color-text-primary); font-weight:600; }
+
+.brand-seal{ display:flex; flex-direction:column; align-items:center; gap:10px; margin-top:26px; }
+.brand-seal-label{ font-family:var(--font-mono); font-size:8px; letter-spacing:.12em; text-transform:uppercase; color: var(--color-text-muted); }
+
+.day-item{ margin-bottom: 10px; }
+.day-item .day-label{ font-weight:700; color:var(--color-text-primary); }
+
+.action-item{ margin-bottom: 11px; padding-left: 26px; position:relative; }
+.action-num{
+  position:absolute; left:0; top:0; font-family:var(--font-display); font-weight:700; font-size:13px;
+  color: var(--color-accent-intense);
+}
+.action-item p{ margin: 2px 0 0; font-size:10px; }
+
+.help-list{ display:flex; flex-direction:column; gap:7px; margin: 10px 0 20px; }
+.help-item{ font-size:10px; color: var(--color-text-secondary); padding-left:16px; position:relative; }
+.help-item::before{
+  content:''; position:absolute; left:0; top:6px; width:6px; height:6px; border-radius:50%;
+  background: var(--color-accent-intense);
+}
+.help-item b{ color: var(--color-text-primary); }
+
+.stats-row{ display:flex; gap:12px; margin: 12px 0 18px; }
+.stat-box{ flex:1; background: var(--color-canvas-elevated); border:1px solid var(--color-border); border-radius: var(--radius-lg); padding: 12px 14px; text-align:center; }
+.stat-box b{ display:block; font-family:var(--font-display); font-size:19px; color: var(--color-accent-intense); }
+.stat-box span{ font-size:8px; color: var(--color-text-muted); line-height:1.35; display:block; margin-top:3px; }
+
+.cta-box{
+  margin-top: 20px; padding: 20px 22px; border-radius: var(--radius-lg);
+  background: var(--color-accent-subtle); border: 1px solid var(--color-border-accent); text-align:center;
+}
+.cta-box p{ color: var(--color-text-primary); font-size:11px; margin: 0 0 12px; }
+.cta-btn{
+  display:inline-block; font-family:var(--font-body); font-weight:600; font-size:11px; color:#fff;
+  background: var(--color-text-primary); border-radius: var(--radius-full); padding: 10px 26px; text-decoration:none;
+}
+
+.page-footer{
+  position:absolute; bottom:14mm; left:20mm; right:20mm; display:flex; justify-content:space-between;
+  font-family:var(--font-mono); font-size:7.5px; color: var(--color-text-muted); letter-spacing:.04em;
+  padding-top:8px; border-top:1px solid var(--color-border);
+}
+</style>
+</head>
+<body>
+
+<div class="page">
+  <div class="page-header"><span class="logo-word">brainmap</span><span class="page-tag">PÁGINA 1 DE 4</span></div>
+  <div class="title-row">
+    <div class="title-col">
+      <span class="eyebrow">Informe de diagnóstico · Resultado individual</span>
+      <h1>Fricción <em>estructural</em></h1>
+    </div>
+    
+    <div class="gauge-wrap">
+      <svg viewBox="0 0 100 100" width="112" height="112">
+        <circle cx="50" cy="50" r="42" fill="none" stroke="#ECECEB" stroke-width="7"/>
+        <circle cx="50" cy="50" r="42" fill="none" stroke="#E4603B" stroke-width="7" stroke-linecap="round"
+          stroke-dasharray="264" transform="rotate(-90 50 50)"
+          stroke-dashoffset="{{GAUGE_OFFSET}}"/>
+      </svg>
+      <div class="gauge-num"><b>{{PUNTAJE}}</b><span>DE 30</span></div>
+    </div>
+  </div>
+  <p class="score-line">Puntaje: <b>{{PUNTAJE}}/30</b></p>
+  <p class="meta-line">Informe generado a solicitud de {{NOMBRE}}<br>Generado el {{FECHA}}</p>
+
+  <p class="lede">Su operación probablemente está perdiendo clientes sin que exista, hasta ahora, una vista integral de cómo se conecta —o no— cada sistema con el siguiente.</p>
+
+  <h2>Qué significa este resultado</h2>
+  <p>Este nivel indica que la fricción no está concentrada en uno o dos puntos aislados, sino distribuida a lo largo de la mayoría de la operación. Esto no significa ausencia de capacidad instalada: significa que los sistemas y procesos existentes operan de manera aislada, y que las conexiones entre ellos son, en su mayoría, manuales o inexistentes — lo que en gestión de operaciones se conoce como <strong>fragmentación en silos</strong>.</p>
+
+  <div class="case-box">
+    <span class="case-label">Caso ilustrativo</span>
+    <p>Una empresa de servicios financieros identificó que un mismo cliente podía tener hasta cuatro registros distintos en cuatro sistemas independientes (ventas, cobranza, soporte, marketing), sin sincronización entre ellos. Cada área operaba con una versión parcial de la verdad sobre ese cliente. El costo real de esta fragmentación solo se hizo evidente cuando comenzó a impactar la retención.</p>
+  </div>
+  
+    <div class="toc">
+      <div class="toc-title">En este informe</div>
+      <div class="toc-row"><span class="toc-page">02</span><span class="toc-label">Su resultado por zona</span> — desglose y causas frecuentes</div>
+      <div class="toc-row"><span class="toc-page">03</span><span class="toc-label">Plan de acción</span> — por dónde empezar</div>
+      <div class="toc-row"><span class="toc-page">04</span><span class="toc-label">Marco teórico</span> — la metodología detrás del diagnóstico</div>
+    </div>
+  <div class="page-footer"><span>brainmap · Ingeniería Empática</span><span>Informe confidencial — uso individual</span></div>
+</div>
+
+<div class="page">
+  <div class="page-header"><span class="logo-word">brainmap</span><span class="page-tag">PÁGINA 2 DE 4</span></div>
+  <h2>Su resultado por zona</h2>
+  <div class="zone-list">
+        <div class="zone-row">
+          <div class="zone-icon"><i class="ph-fill ph-chat-circle-dots"></i></div>
+          <div class="zone-name">Canal</div>
+          <div class="zone-bar-track"><div class="zone-bar-fill" style="width:calc({{BARRA_CANAL}}*1%)"></div></div>
+          <div class="zone-result">{{RESULTADO_CANAL}}</div>
+        </div>
+        <div class="zone-row">
+          <div class="zone-icon"><i class="ph-fill ph-database"></i></div>
+          <div class="zone-name">Datos</div>
+          <div class="zone-bar-track"><div class="zone-bar-fill" style="width:calc({{BARRA_DATOS}}*1%)"></div></div>
+          <div class="zone-result">{{RESULTADO_DATOS}}</div>
+        </div>
+        <div class="zone-row">
+          <div class="zone-icon"><i class="ph-fill ph-gear"></i></div>
+          <div class="zone-name">Automatización</div>
+          <div class="zone-bar-track"><div class="zone-bar-fill" style="width:calc({{BARRA_AUTOMATIZACION}}*1%)"></div></div>
+          <div class="zone-result">{{RESULTADO_AUTOMATIZACION}}</div>
+        </div>
+        <div class="zone-row">
+          <div class="zone-icon"><i class="ph-fill ph-brain"></i></div>
+          <div class="zone-name">Adopción de IA</div>
+          <div class="zone-bar-track"><div class="zone-bar-fill" style="width:calc({{BARRA_IA}}*1%)"></div></div>
+          <div class="zone-result">{{RESULTADO_IA}}</div>
+        </div>
+        <div class="zone-row">
+          <div class="zone-icon"><i class="ph-fill ph-users-three"></i></div>
+          <div class="zone-name">Experiencia del empleado</div>
+          <div class="zone-bar-track"><div class="zone-bar-fill" style="width:calc({{BARRA_EX}}*1%)"></div></div>
+          <div class="zone-result">{{RESULTADO_EX}}</div>
+        </div></div>
+
+  <h2>Por qué ocurre esto, no solo qué ocurre</h2>
+  <p>A diferencia de una operación con fricción puntual, en este nivel la desconexión constituye la norma más que la excepción. Este patrón es característico de organizaciones con crecimiento acelerado, con sistemas heredados de fusiones o migraciones de plataforma, o que no han contado con un proceso formal de <strong>auditoría de integración</strong> entre sus distintas áreas.</p>
+  <p>En términos de retorno de inversión, este nivel presenta la mayor oportunidad de mejora: cualquier conexión que se resuelva elimina fricción recurrente, no un incidente aislado.</p>
+
+  <h2>Cómo se manifiesta en la operación diaria</h2>
+  <div class="day-item"><span class="day-label">En Canal:</span> es probable que no exista un registro unificado de las interacciones con el cliente — cada canal opera de forma prácticamente independiente. La consecuencia no es solo la repetición de información: es la exposición del cliente a respuestas inconsistentes según el punto de contacto.</div>
+  <div class="day-item"><span class="day-label">En Datos:</span> buena parte de la información crítica del cliente probablemente reside en registros paralelos o en el conocimiento no documentado de una persona específica, sin estar disponible como fuente consultable por el resto del equipo. Esto constituye un riesgo de continuidad operativa, no solo de eficiencia.</div>
+  <div class="day-item"><span class="day-label">En Automatización:</span> cualquier automatización existente probablemente resuelve una tarea puntual, sin integración con el resto del recorrido del cliente — no por un error de diseño, sino por la ausencia de un mapa de proceso de punta a punta previo a su implementación.</div>
+  <div class="page-footer"><span>brainmap · Ingeniería Empática</span><span>Informe confidencial — uso individual</span></div>
+</div>
+
+<div class="page">
+  <div class="page-header"><span class="logo-word">brainmap</span><span class="page-tag">PÁGINA 3 DE 4</span></div>
+  <h2>El costo de no intervenir</h2>
+  <p>En este nivel, el costo no es gradual: es estructural. Cada período sin un diagnóstico integral implica que las decisiones de negocio se sostienen sobre información parcial, lo que tiende a amplificar el problema en lugar de resolverlo. La automatización, en este contexto, no constituye una solución — representa un riesgo, si se aplica antes de identificar con precisión dónde se concentra la desconexión.</p>
+
+  <h2>Plan de acción</h2>
+  <div class="action-item"><span class="action-num">01</span><h3>Suspenda nuevas automatizaciones hasta contar con un mapa de proceso completo</h3><p>Añadir velocidad a un sistema desconectado no resuelve la fragmentación: la consolida.</p></div>
+  <div class="action-item"><span class="action-num">02</span><h3>Identifique dónde reside efectivamente la información de sus clientes</h3><p>Antes de integrar sistemas, es necesario establecer qué información existe, dónde se almacena y quién es responsable de su gobernanza.</p></div>
+  <div class="action-item"><span class="action-num">03</span><h3>Defina un único punto de partida, no cinco simultáneos</h3><p>Intervenir las cinco zonas en paralelo típicamente no resuelve ninguna con la profundidad necesaria.</p></div>
+  <div class="action-item"><span class="action-num">04</span><h3>Asigne responsabilidad formal sobre la experiencia de punta a punta</h3><p>En la mayoría de los casos en este nivel, ese mandato no existe todavía.</p></div>
+
+  <h2>Cómo podemos ayudar</h2>
+  <div class="help-list">
+    <div class="help-item"><b>Consultoría de experiencia de clientes</b> — para construir el mapa de proceso antes de intervenir cualquier sistema</div>
+    <div class="help-item"><b>Diseño de sistemas y contenidos para empleados</b> — cuando el conocimiento crítico reside en las personas, no en las herramientas</div>
+    <div class="help-item"><b>Automatización de procesos</b> — una vez establecido el mapa de integración</div>
+  </div>
+  <div class="page-footer"><span>brainmap · Ingeniería Empática</span><span>Informe confidencial — uso individual</span></div>
+</div>
+
+<div class="page">
+  <div class="page-header"><span class="logo-word">brainmap</span><span class="page-tag">PÁGINA 4 DE 4</span></div>
+  
+<h2>El modelo de los 5 quiebres</h2>
+<p>En brainmap identificamos, después de más de 50 proyectos de automatización y experiencia de cliente, que la fricción en la experiencia de cliente casi nunca ocurre <em>dentro</em> de un sistema — ocurre <em>entre</em> sistemas. Este principio constituye la base de nuestra metodología: diagnosticar los quiebres antes de automatizar cualquier proceso.</p>
+<div class="stats-row">
+  <div class="stat-box"><b>96%</b><span>de clientes con interacciones de alto esfuerzo son más propensos a irse (Gartner)</span></div>
+  <div class="stat-box"><b>73%</b><span>de proyectos de automatización fracasa por automatizar un proceso roto (McKinsey)</span></div>
+  <div class="stat-box"><b>7%</b><span>de los centros de contacto logra transferir contexto entre canales (Gartner)</span></div>
+</div>
+
+  
+<div class="cta-box">
+  <p>Este diagnóstico es un punto de partida, no una sentencia. El equipo brainmap puede ayudarle a identificar exactamente dónde intervenir primero.</p>
+  <a class="cta-btn" href="https://www.brainmap.cl/hablemos?lead={{{{TOKEN_PUBLICO}}}}">Hablemos</a>
+</div>
+
+  
+    <div class="brand-seal">
+      <svg viewBox="0 0 220 46" width="180" height="38">
+        <line x1="20" y1="23" x2="200" y2="23" stroke="#F7D6C8" stroke-width="1.5" stroke-dasharray="3 5"/>
+        <circle cx="20" cy="23" r="5" fill="#FBE8DF" stroke="#E4603B" stroke-width="1.5"/>
+        <circle cx="65" cy="23" r="5" fill="#FBE8DF" stroke="#E4603B" stroke-width="1.5"/>
+        <circle cx="110" cy="23" r="6.5" fill="#E4603B"/>
+        <circle cx="155" cy="23" r="5" fill="#FBE8DF" stroke="#E4603B" stroke-width="1.5"/>
+        <circle cx="200" cy="23" r="5" fill="#FBE8DF" stroke="#E4603B" stroke-width="1.5"/>
+      </svg>
+      <span class="brand-seal-label">5 quiebres · 1 diagnóstico</span>
+    </div>
+  <div class="page-footer"><span>brainmap · Ingeniería Empática</span><span>Informe confidencial — uso individual</span></div>
+</div>
+</body>
+</html>

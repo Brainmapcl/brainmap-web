@@ -1,11 +1,13 @@
 ---
-// Landing standalone del lead magnet "Checklist de Diagnóstico de Costuras".
-// A propósito NO usa src/layouts/Layout.astro: esa página trae el <nav> del
-// home, que no debe aparecer en una landing de conversión aislada. Por eso
-// se repiten aquí, a mano, sólo las dos piezas de Layout.astro que sí
-// necesita: los tokens de diseño y el snippet de Meta Pixel.
+// Landing standalone del lead magnet "Checklist de Diagnóstico de Quiebres".
+// A propósito NO usa src/layouts/Layout.astro: ese trae el <nav> del home, que
+// no debe aparecer en una landing de conversión aislada. Se repiten aquí a mano
+// sólo las piezas de Layout.astro que sí necesita: los 6 archivos de tokens del
+// design system (_ds), Phosphor Icons, el Meta Pixel y el snippet de GA4.
 import { DS_BASE } from '../lib/constants';
 
+// FASE 3 (pendiente): endpoint del webhook. Hoy NO se usa — el formulario está
+// simulado (ver el bloque 'PENDIENTE — CONEXIÓN REAL' al final del <body>).
 const WEBHOOK_URL = 'https://brainmap-n8n2.onq6ef.easypanel.host/webhook/checklist-costuras';
 ---
 
@@ -29,159 +31,225 @@ const WEBHOOK_URL = 'https://brainmap-n8n2.onq6ef.easypanel.host/webhook/checkli
 <link rel="stylesheet" href={`${DS_BASE}/tokens/radii.css`} />
 <link rel="stylesheet" href={`${DS_BASE}/tokens/motion.css`} />
 
-<style>
-  *,*::before,*::after{box-sizing:border-box}
-  html{overflow-x:hidden}
-  body{margin:0;background:var(--color-canvas);font-family:var(--font-body);color:var(--color-text-primary);-webkit-font-smoothing:antialiased;overflow-x:hidden;max-width:100vw}
-  img,video{max-width:100%;display:block}
-  .wrap{max-width:1100px;margin:0 auto;padding:0 32px}
-  @media (max-width:720px){.wrap{padding:0 20px}}
+<link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/regular/style.css" />
+<link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/fill/style.css" />
 
-  /* seam motif — the signature element */
-  .seam{
-    position:relative; height:64px; margin:0 auto; max-width:1100px;
-    display:flex; align-items:center; justify-content:center;
-  }
-  .seam svg{width:100%;height:24px; overflow:visible}
-  .seam .seam-line{
-    stroke-dasharray:10 8; transform-box:fill-box; transform-origin:0% 50%;
-    transform:scaleX(0); transition:transform 1s var(--ease-out, ease);
-  }
-  .seam.in-view .seam-line{transform:scaleX(1)}
-  .seam .seam-label{
-    position:absolute; background:var(--color-canvas); padding:0 18px;
-    font-family:var(--font-mono); font-size:11px; letter-spacing:.14em;
-    text-transform:uppercase; color:var(--color-text-muted);
-    opacity:0; transition:opacity .6s ease .5s;
-  }
-  .seam.in-view .seam-label{opacity:1}
+<style is:global>
+*,*::before,*::after{box-sizing:border-box}
+html{overflow-x:hidden}
+body{
+  margin:0;background:var(--color-canvas);font-family:var(--font-body);color:var(--color-text-primary);
+  -webkit-font-smoothing:antialiased;overflow-x:hidden;max-width:100vw;position:relative;
+}
+/* atmósfera ambiental — hilos de costura muy sutiles cruzando toda la página,
+   la metáfora de marca hecha textura, no solo palabra */
+body::before{
+  content:'';position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.5;
+  background-image:
+    repeating-linear-gradient(115deg, transparent 0 26px, rgba(228,96,59,.05) 26px 27px, transparent 27px 54px),
+    repeating-linear-gradient(25deg, transparent 0 38px, rgba(30,30,31,.025) 38px 39px, transparent 39px 76px);
+}
+.wrap, .seam, footer{position:relative;z-index:1}
+img,video{max-width:100%;display:block}
+.wrap{max-width:1100px;margin:0 auto;padding:0 32px}
+@media (max-width:720px){.wrap{padding:0 20px}}
 
-  .reveal{opacity:0; transform:translateY(16px); transition:opacity .6s ease, transform .6s ease}
-  .reveal.in-view{opacity:1; transform:none}
-  @media (prefers-reduced-motion: reduce){
-    .seam .seam-line, .seam .seam-label, .reveal{transition:none; opacity:1; transform:none}
-  }
+.seam{position:relative; height:64px; margin:0 auto; max-width:1100px; display:flex; align-items:center; justify-content:center;}
+.seam svg{width:100%;height:24px; overflow:visible}
+.seam .seam-line{stroke-dasharray:10 8; transform-box:fill-box; transform-origin:0% 50%; transform:scaleX(1);}
+.seam .seam-label{position:absolute; background:var(--color-canvas); padding:0 18px; font-family:var(--font-mono); font-size:11px; letter-spacing:.14em; text-transform:uppercase; color:var(--color-text-muted);}
 
-  /* eyebrow badge */
-  .eyebrow{
-    display:inline-flex; align-items:center; gap:8px;
-    font-family:var(--font-body); font-size:11px; font-weight:600;
-    letter-spacing:.08em; text-transform:uppercase; color:var(--color-accent-intense);
-    background:var(--color-accent-subtle); border:1px solid var(--color-border-accent);
-    padding:5px 14px; border-radius:var(--radius-full);
-  }
+.eyebrow{display:inline-flex; align-items:center; gap:8px; font-family:var(--font-body); font-size:11px; font-weight:600; letter-spacing:.08em; text-transform:uppercase; color:var(--color-accent-intense); background:var(--color-accent-subtle); border:1px solid var(--color-border-accent); padding:5px 14px; border-radius:var(--radius-full);}
 
-  /* HERO */
-  .hero{padding:76px 0 48px}
-  .hero-grid{display:grid; grid-template-columns:1.1fr .9fr; gap:64px; align-items:center}
-  @media (max-width:900px){.hero-grid{grid-template-columns:1fr; gap:40px}}
-  .logo{display:flex;align-items:center;gap:10px;margin-bottom:56px}
-  .logo-mark{width:34px;height:34px;border-radius:9px;background:var(--color-text-primary);display:flex;align-items:center;justify-content:center}
-  .logo-mark svg{width:18px;height:18px}
-  .logo-word{font-family:var(--font-display);font-weight:600;font-size:19px;letter-spacing:-0.02em}
-  h1{
-    font-family:var(--font-display); font-weight:600; letter-spacing:-0.02em;
-    font-size:clamp(34px,4.4vw,52px); line-height:1.08; margin:20px 0 22px;
-  }
-  h1 em{font-style:italic; color:var(--color-text-accent)}
-  .hero-sub{font-size:17px; line-height:1.6; color:var(--color-text-secondary); max-width:460px; margin:0 0 32px}
-  .btn-hero{
-    display:inline-flex; align-items:center; gap:8px; font-family:var(--font-body); font-weight:600; font-size:15px;
-    color:#fff; background:var(--color-text-primary); border-radius:var(--radius-full); padding:15px 30px;
-    text-decoration:none; box-shadow:0 4px 20px rgba(30,30,31,.18); margin-bottom:34px;
-    transition:transform .18s ease, box-shadow .18s ease;
-  }
-  .btn-hero:hover{transform:translateY(-2px); box-shadow:0 8px 28px rgba(30,30,31,.24)}
-  .stat-row{display:flex; gap:28px; margin-top:8px; flex-wrap:wrap}
-  .stat{display:flex; flex-direction:column; gap:2px}
-  .stat b{font-family:var(--font-display); font-size:30px; color:var(--color-text-accent); line-height:1}
-  .stat span{font-size:12px; color:var(--color-text-muted); max-width:150px; line-height:1.35}
+.hero{padding:76px 0 24px; position:relative}
+.hero-copy{max-width:640px; margin:0 auto; text-align:center; position:relative; z-index:1}
+.hero-copy .stat-row{justify-content:center}
+.hero-copy .btn-hero{margin-left:auto; margin-right:auto}
+.showcase{padding:16px 0 40px; position:relative}
+.showcase-frame{position:relative; padding:20px}
+.showcase-frame::before, .showcase-frame::after,
+.showcase-frame .corner-tr, .showcase-frame .corner-bl{
+  content:''; position:absolute; width:34px; height:34px; pointer-events:none;
+}
+.showcase-frame::before{ /* top-left */
+  top:0; left:0; border-top:2.5px solid var(--color-accent-intense); border-left:2.5px solid var(--color-accent-intense);
+}
+.showcase-frame::after{ /* bottom-right */
+  bottom:0; right:0; border-bottom:2.5px solid var(--color-accent-intense); border-right:2.5px solid var(--color-accent-intense);
+}
+.showcase-frame .corner-tr{ top:0; right:0; border-top:2.5px solid var(--color-accent-intense); border-right:2.5px solid var(--color-accent-intense); }
+.showcase-frame .corner-bl{ bottom:0; left:0; border-bottom:2.5px solid var(--color-accent-intense); border-left:2.5px solid var(--color-accent-intense); }
+.showcase .sysx-wrap{position:relative; z-index:1}
+.logo{display:flex;align-items:center;gap:10px;margin-bottom:56px}
+.logo-mark-img{width:34px;height:34px;object-fit:contain;display:block}
+.logo-word{font-family:var(--font-display);font-weight:600;font-size:19px;letter-spacing:-0.02em}
+h1{font-family:var(--font-display); font-weight:600; letter-spacing:-0.02em; font-size:clamp(34px,4.4vw,52px); line-height:1.08; margin:20px 0 22px;}
+h1 em{font-style:italic; color:var(--color-text-accent)}
+.hero-sub{font-size:17px; line-height:1.6; color:var(--color-text-secondary); max-width:460px; margin:0 auto 32px}
+.btn-hero{display:inline-flex; align-items:center; gap:8px; font-family:var(--font-body); font-weight:600; font-size:15px; color:#fff; background:var(--color-text-primary); border-radius:var(--radius-full); padding:15px 30px; text-decoration:none; box-shadow:0 4px 20px rgba(30,30,31,.18); margin-bottom:34px; transition:transform .18s ease, box-shadow .18s ease;}
+.btn-hero:hover{transform:translateY(-2px); box-shadow:0 8px 28px rgba(30,30,31,.24)}
+.btn-arrow{transition:transform .2s ease; font-size:16px}
+.btn-hero:hover .btn-arrow{transform:translateX(4px)}
+.stat-row{display:flex; gap:28px; margin-top:8px; flex-wrap:wrap; justify-content:center}
+.stat{display:flex; flex-direction:column; align-items:center; gap:12px; flex:1 1 0; min-width:150px; max-width:220px; text-align:center}
+.stat b{font-family:var(--font-display); font-size:clamp(30px,4vw,38px); color:var(--color-text-accent); line-height:1}
+.stat span{font-size:13.5px; color:var(--color-text-muted); line-height:1.4}
 
-  /* PDF preview card */
-  .pdf-card{
-    background:var(--color-canvas-elevated); border-radius:var(--radius-2xl);
-    box-shadow:var(--shadow-lg); padding:20px; position:relative;
-  }
-  .pdf-cover{
-    aspect-ratio:3/4; border-radius:var(--radius-lg); overflow:hidden; position:relative;
-    background:linear-gradient(160deg,var(--color-canvas) 0%,var(--color-accent-50, #FEF3EE) 60%,var(--color-accent-100, #FBE8DF) 100%);
-    display:flex; flex-direction:column; justify-content:space-between; padding:26px;
-  }
-  .pdf-cover .arc{position:absolute;inset:0;opacity:.5;pointer-events:none}
-  .pdf-cover-top{position:relative;z-index:1;display:flex;justify-content:space-between;align-items:flex-start}
-  .pdf-cover-top .brand{font-family:var(--font-display);font-weight:600;font-size:14px}
-  .pdf-cover-top .tag{font-family:var(--font-mono);font-size:8px;letter-spacing:.1em;color:var(--color-text-muted);text-align:right;line-height:1.5}
-  .pdf-cover-bottom{position:relative;z-index:1}
-  .pdf-cover-bottom .badge{font-family:var(--font-mono);font-size:8px;letter-spacing:.1em;text-transform:uppercase;background:var(--color-accent-subtle);color:var(--color-accent-intense);padding:3px 8px;border-radius:6px;display:inline-block;margin-bottom:10px}
-  .pdf-cover-bottom h3{font-family:var(--font-display);font-size:22px;line-height:1.1;margin:0 0 8px;font-weight:600}
-  .pdf-cover-bottom p{font-size:10px;color:var(--color-text-secondary);line-height:1.4;margin:0}
-  .pdf-meta{display:flex;justify-content:space-between;align-items:center;padding:14px 6px 4px;font-size:12px;color:var(--color-text-muted)}
-  .pdf-meta b{color:var(--color-text-primary)}
+.sysx-wrap{max-width:940px; margin:0 auto}
+.sysx-row{display:flex; align-items:stretch; gap:0}
+@media (max-width:720px){.sysx-row{flex-direction:column}}
+.sysx { position: relative; flex:1 1 auto; min-width:0; aspect-ratio: 1256 / 1168; overflow: hidden; }
+.sysx-side{
+  flex:0 0 260px; display:flex; align-items:center; justify-content:center; padding:24px;
+  border-left:1px solid var(--color-border); background:var(--color-canvas);
+}
+@media (max-width:720px){.sysx-side{flex-basis:auto; border-left:none; border-top:1px solid var(--color-border)}}
+.sysx-stage { position: absolute; left: 0; top: 0; width: 1400px; height: 1200px; transform-origin: 0 0; }
+.sysx-glow { position: absolute; inset: 0; background: radial-gradient(900px 760px at 50% 46%, rgba(255,255,255,.95), rgba(251,251,250,0) 72%); }
+.sysx-net { position: absolute; inset: 0; transform-origin: 50% 50%; }
+.sysx-node { position: absolute; transform-origin: 50% 50%; }
+.sysx-ball { position: absolute; inset: 0; border-radius: 50%;
+  background: var(--color-canvas-elevated); border: 1.8px solid var(--color-border);
+  transition: background-color .25s ease, border-color .25s ease; }
+.sysx-label { position: absolute; left: 50%; top: 50%; transform: translate(-50%,-50%); width: 250px;
+  text-align: center; white-space: nowrap; font-family: var(--font-body);
+  font-weight: 700; font-size: 28px; letter-spacing: -.015em; line-height: 1.1; color: var(--color-text-primary); }
+.sysx-card { position:relative; width: 100%; min-height:130px; font-family: var(--font-body); }
+.sysx-num { font-family: var(--font-mono); font-size: 12px; letter-spacing: .14em; color: var(--color-accent-intense); }
+.sysx-title { margin-top: 8px; font-size: 19px; font-weight: 700; line-height: 1.18; letter-spacing: -.015em; color: var(--color-text-primary); }
+.sysx-desc { margin-top: 8px; font-size: 13.5px; line-height: 1.5; color: var(--color-text-muted); }
+.sysx-idle-label{
+  position:absolute; inset:0; display:flex; align-items:center; justify-content:center; text-align:center;
+  font-family:var(--font-mono); font-size:11px; letter-spacing:.1em; text-transform:uppercase; color:var(--color-text-muted);
+  opacity:1; transition:opacity .3s ease;
+}
+.sysx-active-content{position:absolute; inset:0; opacity:0; transition:opacity .3s ease}
+.sysx-card.sysx-active .sysx-idle-label{opacity:0}
+.sysx-card.sysx-active .sysx-active-content{opacity:1}
+@media (max-width:720px){ .sysx-side{padding:20px} }
 
-  /* costuras section */
-  .costuras{padding:56px 0 64px}
-  .costuras-head{max-width:640px;margin:0 auto 40px;text-align:center}
-  h2{font-family:var(--font-display);font-weight:600;font-size:clamp(26px,3vw,36px);letter-spacing:-0.02em;line-height:1.15;margin:14px 0 12px}
-  .costuras-head p{color:var(--color-text-secondary);font-size:15px;line-height:1.6;margin:0}
-  .costuras-list{display:grid;grid-template-columns:repeat(5,1fr);gap:14px}
-  @media (max-width:900px){.costuras-list{grid-template-columns:repeat(2,1fr)}}
-  @media (max-width:520px){.costuras-list{grid-template-columns:1fr}}
-  .costura-item{
-    background:var(--color-canvas-elevated); border:1px solid var(--color-border);
-    border-radius:var(--radius-lg); padding:18px 16px;
-  }
-  .costura-item .n{font-family:var(--font-mono);font-size:10px;color:var(--color-accent-intense);letter-spacing:.1em}
-  .costura-item h4{font-family:var(--font-body);font-weight:600;font-size:14px;margin:8px 0 4px}
-  .costura-item p{font-size:12.5px;color:var(--color-text-muted);line-height:1.5;margin:0}
+.costuras{padding:56px 0 64px}
+.costuras-head{max-width:640px;margin:0 auto 40px;text-align:center}
+h2{font-family:var(--font-display);font-weight:600;font-size:clamp(26px,3vw,36px);letter-spacing:-0.02em;line-height:1.15;margin:14px 0 12px}
+.costuras-head p{color:var(--color-text-secondary);font-size:15px;line-height:1.6;margin:0}
+.costuras-list{display:grid;grid-template-columns:repeat(5,1fr);gap:14px; position:relative}
+.costuras-list::before{
+  content:''; position:absolute; left:2%; right:2%; top:38px; height:0; z-index:0;
+  border-top:2px dashed var(--color-border-accent);
+}
+@media (max-width:900px){.costuras-list{grid-template-columns:repeat(2,1fr)} .costuras-list::before{display:none}}
+@media (max-width:520px){.costuras-list{grid-template-columns:1fr}}
+.costura-item{
+  background:var(--color-canvas-elevated); border:1px solid var(--color-border); border-radius:var(--radius-lg);
+  padding:18px 16px; position:relative; z-index:1; transition:transform .2s ease, box-shadow .2s ease, border-color .2s ease;
+}
+.costura-item:hover{transform:translateY(-4px); box-shadow:0 14px 28px rgba(30,30,31,.10); border-color:var(--color-border-accent)}
+.costura-item:nth-child(even):hover{transform:translateY(18px)}
+.costura-item:nth-child(even){transform:translateY(22px)}
+@media (max-width:900px){.costura-item:nth-child(even){transform:none}}
+.costura-item .n{
+  display:inline-flex; align-items:center; justify-content:center; width:22px; height:22px;
+  background:var(--color-canvas); border:1px solid var(--color-border-accent); border-radius:50%;
+}
+.costura-item .n{font-family:var(--font-mono);font-size:10px;color:var(--color-accent-intense);letter-spacing:.1em}
+.costura-item h4{font-family:var(--font-body);font-weight:600;font-size:14px;margin:8px 0 4px}
+.costura-item p{font-size:12.5px;color:var(--color-text-muted);line-height:1.5;margin:0}
 
-  /* form section */
-  .form-section{padding:0 0 88px}
-  .form-card{
-    background:var(--color-canvas-elevated); border-radius:var(--radius-2xl);
-    box-shadow:var(--shadow-lg); padding:44px; max-width:560px; margin:0 auto;
-  }
-  @media (max-width:600px){.form-card{padding:28px}}
-  .form-card h2{text-align:center;font-size:26px;margin-top:8px}
-  .form-card .sub{text-align:center;color:var(--color-text-secondary);font-size:14.5px;line-height:1.55;margin:0 0 28px}
-  .field{display:flex;flex-direction:column;gap:6px;margin-bottom:16px}
-  .field label{font-size:12.5px;font-weight:500;color:var(--color-text-secondary)}
-  .field label .opt{font-weight:400;color:var(--color-text-muted)}
-  .privacy-note{font-size:11.5px;color:var(--color-text-muted);text-align:center;line-height:1.5;margin:12px 0 0}
-  .field input{
-    font-family:var(--font-body);font-size:15px;color:var(--color-text-primary);
-    background:var(--color-canvas);border:1.5px solid transparent;border-radius:var(--radius-input);
-    padding:13px 16px;outline:none;box-shadow:var(--shadow-neumorph-inset);
-  }
-  .field input:focus{border-color:var(--color-accent)}
+.quiz-section{padding:0 0 88px}
+.quiz-card{background:var(--color-canvas-elevated); border-radius:var(--radius-2xl); box-shadow:var(--shadow-lg); padding:44px; max-width:560px; margin:0 auto;}
+@media (max-width:600px){.quiz-card{padding:28px}}
+.quiz-view h2{text-align:center;font-size:26px;margin-top:8px}
+.quiz-view .sub{text-align:center;color:var(--color-text-secondary);font-size:14.5px;line-height:1.55;margin:0 0 28px}
+#quiz-intro{text-align:center}
+#quiz-intro .sub{margin-bottom:28px}
 
-  /* Honeypot — visualmente invisible, fuera del tab order, para atrapar bots
-     que autocompletan todos los campos de un formulario (los humanos nunca
-     ven ni llenan este campo). */
-  .hp-field{
-    position:absolute; left:-9999px; top:-9999px;
-    width:1px; height:1px; opacity:0; overflow:hidden; pointer-events:none;
-  }
+.quiz-progress-row{display:flex; justify-content:space-between; align-items:center; margin-bottom:14px}
+.quiz-progress-label{font-size:12.5px; font-weight:600; color:var(--color-text-secondary)}
+.quiz-progress-cat{
+  display:inline-flex; align-items:center; gap:5px;
+  font-family:var(--font-mono); font-size:11px; letter-spacing:.08em; text-transform:uppercase;
+  color:var(--color-accent-intense); background:var(--color-accent-subtle); border:1px solid var(--color-border-accent);
+  padding:5px 14px; border-radius:var(--radius-full); font-weight:600;
+}
+.quiz-progress-cat i{font-size:15.5px}
+.quiz-progress-track{height:5px; background:var(--color-border); border-radius:var(--radius-full); overflow:hidden; margin-bottom:32px}
+.quiz-progress-fill{height:100%; width:0%; background:var(--color-accent-intense); border-radius:var(--radius-full); transition:width .35s ease}
 
-  .btn-primary{
-    width:100%;font-family:var(--font-body);font-weight:600;font-size:15px;color:#fff;
-    background:var(--color-text-primary);border:none;border-radius:var(--radius-full);
-    padding:16px;cursor:pointer;box-shadow:0 4px 20px rgba(30,30,31,.18);margin-top:6px;
-    transition:transform .18s ease, box-shadow .18s ease;
-  }
-  .btn-primary:hover{transform:translateY(-2px); box-shadow:0 8px 26px rgba(30,30,31,.24)}
-  .btn-primary:disabled{opacity:.6; cursor:not-allowed; transform:none; box-shadow:0 4px 20px rgba(30,30,31,.18)}
-  .trust-row{display:flex;justify-content:center;gap:18px;margin-top:18px;flex-wrap:wrap}
-  .trust-row span{font-size:11.5px;color:var(--color-text-muted);display:flex;align-items:center;gap:6px}
-  .trust-row .dot{width:5px;height:5px;border-radius:50%;background:var(--color-accent)}
+.quiz-question{font-family:var(--font-display); font-size:22px; font-weight:600; line-height:1.35; color:var(--color-text-primary); margin:0 0 28px; min-height:88px}
 
-  .form-error{
-    display:none; background:var(--color-error-subtle); color:var(--color-error);
-    border:1px solid var(--color-error); border-radius:var(--radius-md, 12px);
-    padding:12px 16px; font-size:13.5px; line-height:1.5; margin:0 0 16px; text-align:center;
-  }
+.quiz-answers{display:flex; flex-direction:column; gap:10px; margin-bottom:18px}
+.quiz-answer-btn{
+  display:flex; align-items:center; justify-content:flex-start; gap:10px;
+  font-family:var(--font-body); font-size:15px; font-weight:600; color:var(--color-text-primary);
+  background:var(--color-canvas); border:1.5px solid var(--color-border); border-radius:var(--radius-input);
+  padding:15px 18px; cursor:pointer; transition:all .15s ease; width:100%; text-align:left;
+}
+.quiz-answer-btn:hover{border-color:var(--color-accent-intense); background:var(--color-accent-subtle)}
+.quiz-answer-icon{font-size:17px}
+.quiz-back{display:block; margin:0 auto; background:none; border:none; color:var(--color-text-muted); font-size:12.5px; font-family:var(--font-body); cursor:pointer; padding:6px}
+.quiz-back:hover{color:var(--color-text-secondary)}
+.quiz-back:disabled{visibility:hidden}
 
-  footer{padding:28px 0;border-top:1px solid var(--color-border);text-align:center}
-  footer p{font-size:12px;color:var(--color-text-muted);margin:0}
+.quiz-score{font-family:var(--font-display); font-size:56px; font-weight:700; color:var(--color-accent-intense); margin:18px 0 4px; line-height:1}
+.quiz-tier{font-family:var(--font-body); font-size:16px; font-weight:700; color:var(--color-text-primary); margin-bottom:10px}
+.quiz-tier-desc{font-size:14.5px; color:var(--color-text-secondary); line-height:1.65; max-width:440px; margin:0 auto 24px; text-align:left}
+.quiz-teaser{background:var(--color-canvas); border:1px solid var(--color-border); border-radius:var(--radius-lg); padding:18px 20px; margin-bottom:24px}
+.quiz-teaser-title{font-size:13px; font-weight:600; color:var(--color-text-primary); margin:0 0 10px}
+.quiz-teaser-list{margin:0; padding:0; list-style:none; display:flex; flex-direction:column; gap:8px}
+.quiz-teaser-list li{font-size:13.5px; color:var(--color-text-secondary); line-height:1.5; display:flex; align-items:flex-start; gap:8px}
+.quiz-teaser-list li i{color:var(--color-accent-intense); font-size:15px; flex-shrink:0; margin-top:1px}
+
+.credibility-line{
+  display:flex; align-items:center; justify-content:center; gap:10px; max-width:520px; margin:0 auto 24px;
+  font-size:12.5px; color:var(--color-text-muted); line-height:1.4; text-align:center;
+}
+.credibility-avatar{
+  flex-shrink:0; width:28px; height:28px; border-radius:50%; object-fit:contain;
+  background:var(--color-canvas-elevated); padding:5px; box-shadow:0 0 0 1px var(--color-border);
+}
+
+.reveal{opacity:0; transform:translateY(18px); transition:opacity .6s ease, transform .6s ease}
+.reveal.in-view{opacity:1; transform:none}
+.costuras-list .reveal:nth-child(1){transition-delay:.05s}
+.costuras-list .reveal:nth-child(2){transition-delay:.12s}
+.costuras-list .reveal:nth-child(3){transition-delay:.19s}
+.costuras-list .reveal:nth-child(4){transition-delay:.26s}
+.costuras-list .reveal:nth-child(5){transition-delay:.33s}
+@media (prefers-reduced-motion: reduce){.reveal{opacity:1; transform:none; transition:none}}
+.field{display:flex;flex-direction:column;gap:6px;margin-bottom:16px}
+.field label{font-size:12.5px;font-weight:500;color:var(--color-text-secondary)}
+.field label .opt{font-weight:400;color:var(--color-text-muted)}
+.privacy-note{font-size:11.5px;color:var(--color-text-muted);text-align:center;line-height:1.5;margin:12px 0 0}
+.field input{font-family:var(--font-body);font-size:15px;color:var(--color-text-primary);background:var(--color-canvas);border:1.5px solid transparent;border-radius:var(--radius-input);padding:13px 16px;outline:none;box-shadow:var(--shadow-neumorph-inset);}
+.field input:focus{border-color:var(--color-accent)}
+.hp-field{position:absolute; left:-9999px; top:-9999px; width:1px; height:1px; opacity:0; overflow:hidden; pointer-events:none;}
+.btn-primary{width:100%;font-family:var(--font-body);font-weight:600;font-size:15px;color:#fff;background:var(--color-text-primary);border:none;border-radius:var(--radius-full);padding:16px;cursor:pointer;box-shadow:0 4px 20px rgba(30,30,31,.18);margin-top:6px;transition:transform .18s ease, box-shadow .18s ease;}
+.btn-primary:hover{transform:translateY(-2px); box-shadow:0 8px 26px rgba(30,30,31,.24)}
+.trust-row{display:flex;justify-content:center;gap:18px;margin-top:18px;flex-wrap:wrap}
+.trust-row span{font-size:11.5px;color:var(--color-text-muted);display:flex;align-items:center;gap:6px}
+.trust-row .dot{width:5px;height:5px;border-radius:50%;background:var(--color-accent)}
+.form-error{display:none; background:var(--color-error-subtle); color:var(--color-error); border:1px solid var(--color-error); border-radius:var(--radius-md); padding:12px 16px; font-size:13.5px; line-height:1.5; margin:0 0 16px; text-align:center;}
+footer{padding:28px 0;border-top:1px solid var(--color-border);text-align:center}
+footer p{font-size:12px;color:var(--color-text-muted);margin:0}
+
+@keyframes rise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+.stagger{opacity:0; animation:rise .7s ease forwards}
+.stagger:nth-child(1){animation-delay:.05s}
+.stagger:nth-child(2){animation-delay:.16s}
+.stagger:nth-child(3){animation-delay:.27s}
+.stagger:nth-child(4){animation-delay:.38s}
+.stagger:nth-child(5){animation-delay:.49s}
+@media (prefers-reduced-motion: reduce){.stagger{opacity:1; animation:none}}
+
+/* accesibilidad — foco visible con teclado, feedback táctil al hacer clic */
+.btn-hero:focus-visible, .btn-primary:focus-visible, .quiz-answer-btn:focus-visible,
+.quiz-back:focus-visible, .field input:focus-visible{
+  outline:2px solid var(--color-accent-intense); outline-offset:2px;
+}
+.btn-hero:active{transform:translateY(0) scale(.98)}
+.btn-primary:active{transform:translateY(0) scale(.98)}
+.quiz-answer-btn:active{transform:scale(.97)}
+.costura-item:focus-within{outline:2px solid var(--color-accent-intense); outline-offset:2px}
 </style>
 
 <!-- Meta Pixel Code (copiado de src/layouts/Layout.astro — esta página no
@@ -215,50 +283,58 @@ src="https://www.facebook.com/tr?id=1086272037394340&ev=PageView&noscript=1"
 </head>
 <body>
 
+
 <div class="wrap">
   <div class="hero">
     <div class="logo">
-      <div class="logo-mark">
-        <svg viewBox="0 0 24 24" fill="none"><path d="M4 12h4l2-6 4 12 2-6h4" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-      </div>
+      <img src="/assets/logo-brainmap-clean.webp" alt="brainmap" width="34" height="34" class="logo-mark-img">
       <span class="logo-word">brainmap</span>
     </div>
 
-    <div class="hero-grid">
-      <div>
-        <span class="eyebrow">Guía de autodiagnóstico · gratis</span>
-        <h1>¿Dónde se está<br>rompiendo la <em>costura</em><br>con tus clientes?</h1>
-        <p class="hero-sub">Un checklist de 15 preguntas para ubicar, en menos de 10 minutos, en cuál de las 5 costuras entre sistemas tu empresa está perdiendo clientes — antes de automatizar algo más.</p>
+    <div class="hero-copy">
+      <span class="eyebrow stagger">Guía de autodiagnóstico · gratis</span>
+      <h1 class="stagger">Cada quiebre entre tus sistemas<br>es una <em>fuga</em> de clientes.</h1>
+      <p class="hero-sub stagger">Antes de seguir automatizando, responde 15 preguntas en menos de 2 minutos y descubre en cuál de los 5 quiebres entre sistemas es donde estás perdiendo clientes.</p>
 
-        <a href="#form-section" class="btn-hero">Quiero mi checklist gratis</a>
+      <a href="#quiz-section" class="btn-hero stagger">
+        Hacer el diagnóstico gratis
+        <i class="ph ph-arrow-circle-right btn-arrow"></i>
+      </a>
 
-        <div class="stat-row">
-          <div class="stat"><b>96%</b><span>de clientes con interacciones de alto esfuerzo son más propensos a irse (Gartner)</span></div>
-          <div class="stat"><b>73%</b><span>de proyectos de automatización fracasa por automatizar un proceso roto (McKinsey)</span></div>
-          <div class="stat"><b>7%</b><span>de los centros de contacto logra transferir contexto entre canales (Gartner)</span></div>
-        </div>
+      <div class="stat-row stagger">
+        <div class="stat"><b>96%</b><span>de clientes con interacciones de alto esfuerzo son más propensos a irse (Gartner)</span></div>
+        <div class="stat"><b>73%</b><span>de proyectos de automatización fracasa por automatizar un proceso roto (McKinsey)</span></div>
+        <div class="stat"><b>7%</b><span>de los centros de contacto logra transferir contexto entre canales (Gartner)</span></div>
       </div>
+    </div>
+  </div>
+</div>
 
-      <div class="pdf-card">
-        <div class="pdf-cover">
-          <svg class="arc" viewBox="0 0 300 300" fill="none">
-            <circle cx="300" cy="300" r="80" style="stroke:var(--color-accent-intense)" stroke-opacity="0.25"/>
-            <circle cx="300" cy="300" r="130" style="stroke:var(--color-text-muted)" stroke-opacity="0.18"/>
-            <circle cx="300" cy="300" r="180" style="stroke:var(--color-accent-intense)" stroke-opacity="0.12"/>
-          </svg>
-          <div class="pdf-cover-top">
-            <span class="brand">brainmap</span>
-            <span class="tag">INGENIERÍA EMPÁTICA<br>AUTOMATIZACIÓN · CX/EX · IA</span>
+<div class="wrap">
+  <div class="showcase">
+    <div class="showcase-frame">
+      <span class="corner-tr"></span>
+      <span class="corner-bl"></span>
+      <div class="sysx-wrap">
+        <div class="sysx-row">
+          <div class="sysx" id="sysx">
+            <div class="sysx-stage">
+              <div class="sysx-glow"></div>
+              <div class="sysx-net">
+                <svg width="1400" height="1200" style="position:absolute;left:0;top:0;overflow:visible"></svg>
+              </div>
+            </div>
           </div>
-          <div class="pdf-cover-bottom">
-            <span class="badge">Guía de autodiagnóstico</span>
-            <h3>Checklist de diagnóstico de costuras</h3>
-            <p>Dónde tu empresa pierde clientes entre sistemas — y cómo detectarlo antes de automatizar más.</p>
+          <div class="sysx-side">
+            <div class="sysx-card" id="sysx-card">
+              <div class="sysx-idle-label">5 sistemas · 1 diagnóstico</div>
+              <div class="sysx-active-content">
+                <div class="sysx-num"></div>
+                <div class="sysx-title"></div>
+                <div class="sysx-desc"></div>
+              </div>
+            </div>
           </div>
-        </div>
-        <div class="pdf-meta">
-          <span>PDF · <b>6 páginas</b></span>
-          <span>Para gerencias de CX y operaciones</span>
         </div>
       </div>
     </div>
@@ -269,22 +345,22 @@ src="https://www.facebook.com/tr?id=1086272037394340&ev=PageView&noscript=1"
   <svg viewBox="0 0 1100 24" preserveAspectRatio="none">
     <line class="seam-line" x1="0" y1="12" x2="1100" y2="12" style="stroke:var(--color-border)" stroke-width="1"/>
   </svg>
-  <span class="seam-label">5 costuras · 1 diagnóstico</span>
+  <span class="seam-label">5 quiebres · 1 diagnóstico</span>
 </div>
 
 <div class="wrap">
-  <div class="costuras reveal">
-    <div class="costuras-head">
+  <div class="costuras">
+    <div class="costuras-head reveal">
       <span class="eyebrow">El marco</span>
-      <h2>Las 5 costuras que rompen la experiencia</h2>
+      <h2>Los 5 quiebres que rompen la experiencia</h2>
       <p>Después de más de 50 proyectos de automatización y CX, identificamos cinco puntos donde la fricción se concentra de forma sistemática.</p>
     </div>
     <div class="costuras-list">
-      <div class="costura-item"><span class="n">01</span><h4>Canal</h4><p>El cliente cambia de canal y pierde el hilo.</p></div>
-      <div class="costura-item"><span class="n">02</span><h4>Datos</h4><p>CRM, ERP y soporte no se hablan entre sí.</p></div>
-      <div class="costura-item"><span class="n">03</span><h4>Automatización aislada</h4><p>Cada área automatizó su propio dolor.</p></div>
-      <div class="costura-item"><span class="n">04</span><h4>Adopción de IA</h4><p>Se usa IA sin gobernanza compartida.</p></div>
-      <div class="costura-item"><span class="n">05</span><h4>Experiencia del empleado</h4><p>Si la herramienta es compleja, el cliente paga el costo.</p></div>
+      <div class="costura-item reveal"><span class="n">01</span><h4>Canal</h4><p>Un cliente repite su problema tres veces porque nadie ve lo que ya contó en otro canal.</p></div>
+      <div class="costura-item reveal"><span class="n">02</span><h4>Datos</h4><p>El CRM dice una cosa, el ERP otra, y tu equipo pierde horas reconciliando manualmente.</p></div>
+      <div class="costura-item reveal"><span class="n">03</span><h4>Automatización aislada</h4><p>Cada área resolvió su propio dolor, pero nadie diseñó cómo se conectan entre sí.</p></div>
+      <div class="costura-item reveal"><span class="n">04</span><h4>Adopción de IA</h4><p>Se usa IA sin criterio compartido. Cada equipo improvisa su propia forma de aplicarla.</p></div>
+      <div class="costura-item reveal"><span class="n">05</span><h4>Experiencia del empleado</h4><p>Si tu equipo navega cinco sistemas para resolver un caso, tu cliente paga esa demora.</p></div>
     </div>
   </div>
 </div>
@@ -293,44 +369,103 @@ src="https://www.facebook.com/tr?id=1086272037394340&ev=PageView&noscript=1"
   <svg viewBox="0 0 1100 24" preserveAspectRatio="none">
     <line class="seam-line" x1="0" y1="12" x2="1100" y2="12" style="stroke:var(--color-border)" stroke-width="1"/>
   </svg>
-  <span class="seam-label">Descarga gratuita</span>
+  <span class="seam-label">Diagnóstico gratuito</span>
 </div>
 
 <div class="wrap">
-  <div class="form-section reveal" id="form-section">
-    <div class="form-card">
-      <div style="text-align:center"><span class="eyebrow">100% gratis</span></div>
-      <h2>Recibe el checklist en tu correo</h2>
-      <p class="sub">Te lo mandamos al instante en PDF. Sin spam, sin llamadas de venta — solo el diagnóstico.</p>
+  <div class="quiz-section" id="quiz-section">
+    <div class="credibility-line reveal">
+      <img src="/assets/logo-brainmap-clean.webp" alt="" class="credibility-avatar">
+      <span>Metodología del equipo detrás de +50 proyectos de CX y automatización, con más de 10 años de experiencia.</span>
+    </div>
+    <div class="quiz-card reveal">
 
-      <div id="form-error" class="form-error">No pudimos enviar tu checklist. Por favor, inténtalo de nuevo en unos segundos.</div>
+      <!-- ===== INTRO ===== -->
+      <div id="quiz-intro" class="quiz-view">
+        <div style="text-align:center"><span class="eyebrow">100% gratis · 2 minutos</span></div>
+        <h2>Responde 15 preguntas rápidas</h2>
+        <p class="sub">Sí o no, sin matices. Al final vas a ver tu puntaje al instante.</p>
+        <button class="btn-primary" type="button" onclick="quizStart()">Empezar el diagnóstico</button>
+      </div>
 
-      <form id="lead-form" novalidate>
-        <div id="form-fields">
-          <div class="field"><label for="f-nombre">Nombre completo</label><input id="f-nombre" name="nombre" required placeholder="Ej: Andrea González"></div>
-          <div class="field"><label for="f-email">Correo electrónico</label><input id="f-email" name="email" type="email" required placeholder="usuario@empresa.cl"></div>
-          <div class="field"><label for="f-telefono">Teléfono <span class="opt">(opcional — solo si prefieres que te contactemos por ahí)</span></label><input id="f-telefono" name="telefono" type="tel" placeholder="+56 9 1234 5678"></div>
-          <div class="field"><label for="f-empresa">Empresa <span class="opt">(opcional)</span></label><input id="f-empresa" name="empresa" placeholder="Nombre de tu empresa"></div>
+      <!-- ===== PREGUNTAS ===== -->
+      <div id="quiz-questions" class="quiz-view" style="display:none">
+        <div class="quiz-progress-row">
+          <span class="quiz-progress-label" id="quiz-progress-label">Pregunta 1 de 15</span>
+          <span class="quiz-progress-cat" id="quiz-progress-cat"><i class="ph-fill" id="quiz-progress-cat-icon"></i> <span id="quiz-progress-cat-text">Canal</span></span>
+        </div>
+        <div class="quiz-progress-track"><div class="quiz-progress-fill" id="quiz-progress-fill"></div></div>
 
-          <!-- Honeypot: campo invisible para humanos, name genérico que los bots suelen autocompletar -->
-          <div class="hp-field" aria-hidden="true">
-            <label for="f-website">Website</label>
-            <input id="f-website" name="website" type="text" tabindex="-1" autocomplete="off">
+        <p class="quiz-question" id="quiz-question-text"></p>
+
+        <div class="quiz-answers">
+          <button class="quiz-answer-btn" type="button" onclick="quizAnswer(2)">
+            <i class="ph-fill ph-check-circle quiz-answer-icon"></i> Siempre
+          </button>
+          <button class="quiz-answer-btn quiz-answer-mid" type="button" onclick="quizAnswer(1)">
+            <i class="ph-fill ph-minus-circle quiz-answer-icon"></i> A veces
+          </button>
+          <button class="quiz-answer-btn quiz-answer-no" type="button" onclick="quizAnswer(0)">
+            <i class="ph-fill ph-x-circle quiz-answer-icon"></i> No
+          </button>
+        </div>
+        <button class="quiz-back" type="button" id="quiz-back-btn" onclick="quizBack()">← Pregunta anterior</button>
+      </div>
+
+      <!-- ===== RESULTADO (parcial, sin gate) ===== -->
+      <div id="quiz-result" class="quiz-view" style="display:none; text-align:center">
+        <span class="eyebrow">Tu resultado</span>
+        <div class="quiz-score" id="quiz-score">–/30</div>
+        <div class="quiz-tier" id="quiz-tier"></div>
+        <p class="quiz-tier-desc" id="quiz-tier-desc"></p>
+
+        <div class="quiz-teaser">
+          <p class="quiz-teaser-title">Tu análisis completo responde:</p>
+          <ul class="quiz-teaser-list">
+            <li><i class="ph-fill ph-check-circle"></i> ¿En cuál de las 5 zonas se concentra tu fricción?</li>
+            <li><i class="ph-fill ph-check-circle"></i> ¿Qué tan grave es cada una?, no solo el puntaje total</li>
+            <li><i class="ph-fill ph-check-circle"></i> ¿Qué hacer primero, específico a tu situación?</li>
+          </ul>
+        </div>
+
+        <button class="btn-primary" type="button" onclick="quizShowForm()">Quiero mi análisis completo</button>
+        <p class="privacy-note">Gratis. Te lo mandamos por correo en un par de minutos.</p>
+      </div>
+
+      <!-- ===== FORMULARIO (gate) ===== -->
+      <div id="quiz-form-view" class="quiz-view" style="display:none">
+        <div style="text-align:center"><span class="eyebrow">Último paso</span></div>
+        <h2>¿A dónde te lo enviamos?</h2>
+        <p class="sub">Tu análisis completo, con recomendaciones específicas para tu empresa.</p>
+
+        <div id="form-error" class="form-error">No pudimos enviar tu análisis. Por favor, inténtalo de nuevo en unos segundos.</div>
+
+        <form id="lead-form" novalidate>
+          <div id="form-fields">
+            <div class="field"><label for="f-nombre">Nombre completo</label><input id="f-nombre" name="nombre" required placeholder="Ej: Andrea González"></div>
+            <div class="field"><label for="f-email">Correo electrónico</label><input id="f-email" name="email" type="email" required placeholder="usuario@empresa.cl"></div>
+            <div class="field"><label for="f-telefono">Teléfono <span class="opt">(opcional — solo si prefieres que te contactemos por ahí)</span></label><input id="f-telefono" name="telefono" type="tel" placeholder="+56 9 1234 5678"></div>
+            <div class="field"><label for="f-empresa">Empresa <span class="opt">(opcional)</span></label><input id="f-empresa" name="empresa" placeholder="Nombre de tu empresa"></div>
+
+            <div class="hp-field" aria-hidden="true">
+              <label for="f-website">Website</label>
+              <input id="f-website" name="website" type="text" tabindex="-1" autocomplete="off">
+            </div>
+
+            <button class="btn-primary" type="submit">Recibir mi análisis completo</button>
+            <p class="privacy-note">No compartimos tu información con terceros. Solo la usamos para enviarte el análisis y, si respondes, seguir la conversación.</p>
           </div>
+          <div id="confirm" style="display:none;text-align:center;padding:20px 0">
+            <div style="font-family:var(--font-display);font-size:20px;margin-bottom:8px">Revisa tu correo ✓</div>
+            <p style="color:var(--color-text-secondary);font-size:14px;margin:0">Te acabamos de enviar tu análisis completo. Si no lo ves en unos minutos, revisa spam o promociones.</p>
+          </div>
+        </form>
+      </div>
 
-          <button class="btn-primary" type="submit">Descargar el checklist gratis</button>
-          <p class="privacy-note">No compartimos tu información con terceros. Solo la usamos para enviarte el checklist y, si respondes, seguir la conversación.</p>
-        </div>
-        <div id="confirm" style="display:none;text-align:center;padding:20px 0">
-          <div style="font-family:var(--font-display);font-size:20px;margin-bottom:8px">Revisa tu correo ✓</div>
-          <p style="color:var(--color-text-secondary);font-size:14px;margin:0">Te acabamos de enviar el checklist en PDF. Si no lo ves en unos minutos, revisa spam o promociones.</p>
-        </div>
-      </form>
-
-      <div class="trust-row">
+      <div class="trust-row" id="quiz-trust-row">
         <span><span class="dot"></span>Sin costo</span>
-        <span><span class="dot"></span>Sin suscripciones</span>
-        <span><span class="dot"></span>Entrega inmediata</span>
+        <span><span class="dot"></span>Sin registro previo</span>
+        <span><span class="dot"></span>2 minutos</span>
       </div>
     </div>
   </div>
@@ -338,55 +473,375 @@ src="https://www.facebook.com/tr?id=1086272037394340&ev=PageView&noscript=1"
 
 <footer><p>brainmap · Ingeniería Empática · © 2026</p></footer>
 
-<script define:vars={{ WEBHOOK_URL }}>
-  const io = new IntersectionObserver((entries) => {
-    entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('in-view'); });
-  }, { threshold: 0.3 });
-  document.querySelectorAll('.seam, .reveal').forEach(el => io.observe(el));
+<script is:inline>
+  var revealObserver = new IntersectionObserver(function (entries) {
+    entries.forEach(function (e) { if (e.isIntersecting) e.target.classList.add('in-view'); });
+  }, { threshold: 0.15 });
+  document.querySelectorAll('.reveal').forEach(function (el) { revealObserver.observe(el); });
+</script>
 
-  const form = document.getElementById('lead-form');
-  const fields = document.getElementById('form-fields');
-  const confirm = document.getElementById('confirm');
-  const errorBox = document.getElementById('form-error');
-  const submitBtn = form.querySelector('.btn-primary');
-  const submitLabel = submitBtn.textContent;
+<script is:inline>
+  // Las 15 preguntas reales del checklist, agrupadas en los 5 quiebres.
+  var QUIZ_QUESTIONS = [
+    { cat: 'Canal', text: 'Un cliente puede cambiar de canal sin repetir su problema.' },
+    { cat: 'Canal', text: 'Todos los canales de atención comparten el mismo historial de conversación.' },
+    { cat: 'Canal', text: 'Existe una sola fuente de información sobre el estado de cada caso, visible desde cualquier canal.' },
+    { cat: 'Datos', text: 'El CRM, el ERP y el sistema de soporte comparten información en tiempo real (no por planilla).' },
+    { cat: 'Datos', text: 'Cualquier persona del equipo puede reconstruir el historial completo de un cliente en menos de un minuto.' },
+    { cat: 'Datos', text: 'Existe un responsable claro de la calidad de los datos de cliente (no "todos" ni "nadie").' },
+    { cat: 'Automatización', text: 'Existe un mapa único y actualizado del viaje del cliente de punta a punta.' },
+    { cat: 'Automatización', text: 'Antes de automatizar un proceso, alguien audita si ese proceso debería existir en su forma actual.' },
+    { cat: 'Automatización', text: 'Los bots y flujos de distintas áreas fueron diseñados para conversar entre sí, no de forma aislada.' },
+    { cat: 'Adopción de IA', text: 'Existe un criterio o política compartida sobre cómo y cuándo usar IA en procesos con clientes.' },
+    { cat: 'Adopción de IA', text: 'Los equipos que usan IA recibieron formación básica, no solo acceso a la herramienta.' },
+    { cat: 'Adopción de IA', text: 'Hay forma de medir si el uso de IA mejora o empeora la experiencia del cliente (no es solo intuición).' },
+    { cat: 'Experiencia del empleado', text: 'Un colaborador nuevo puede resolver el caso más común sin ayuda, en su primera semana.' },
+    { cat: 'Experiencia del empleado', text: 'Las herramientas internas están diseñadas pensando en quien las usa, no solo en quien las compró.' },
+    { cat: 'Experiencia del empleado', text: 'Existe un canal formal para que los equipos reporten fricción en sus propias herramientas.' }
+  ];
 
-  form.addEventListener('submit', async (event) => {
-    event.preventDefault();
-    errorBox.style.display = 'none';
-    submitBtn.disabled = true;
-    submitBtn.textContent = 'Enviando…';
+  var quizAnswers = [];
+  var quizIndex = 0;
 
-    const payload = {
-      nombre: form.nombre.value.trim(),
-      email: form.email.value.trim(),
-      telefono: form.telefono.value.trim(),
-      empresa: form.empresa.value.trim(),
-      website: form.website.value,
-    };
+  function quizStart() {
+    document.getElementById('quiz-intro').style.display = 'none';
+    document.getElementById('quiz-questions').style.display = 'block';
+    quizIndex = 0;
+    quizAnswers = [];
+    quizRender();
+  }
 
-    if (typeof window.fbq === 'function') {
-      window.fbq('track', 'Lead', {content_name: 'checklist_costuras_descarga'});
+  var CAT_ICONS = {
+    'Canal': 'ph-chat-circle-dots',
+    'Datos': 'ph-database',
+    'Automatización': 'ph-gear',
+    'Adopción de IA': 'ph-brain',
+    'Experiencia del empleado': 'ph-users-three'
+  };
+
+  function quizRender() {
+    var q = QUIZ_QUESTIONS[quizIndex];
+    document.getElementById('quiz-progress-label').textContent = 'Pregunta ' + (quizIndex + 1) + ' de ' + QUIZ_QUESTIONS.length;
+    document.getElementById('quiz-progress-cat-text').textContent = q.cat;
+    document.getElementById('quiz-progress-cat-icon').className = 'ph-fill ' + (CAT_ICONS[q.cat] || 'ph-circle');
+    document.getElementById('quiz-progress-fill').style.width = (quizIndex / QUIZ_QUESTIONS.length * 100) + '%';
+    document.getElementById('quiz-question-text').textContent = q.text;
+    document.getElementById('quiz-back-btn').disabled = (quizIndex === 0);
+  }
+
+  function quizAnswer(value) {
+    quizAnswers[quizIndex] = value;
+    quizIndex++;
+    if (quizIndex >= QUIZ_QUESTIONS.length) {
+      quizShowResult();
+    } else {
+      quizRender();
     }
+  }
 
-    try {
-      const res = await fetch(WEBHOOK_URL, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload),
-      });
+  function quizBack() {
+    if (quizIndex === 0) return;
+    quizIndex--;
+    quizRender();
+  }
 
-      if (!res.ok) throw new Error('Webhook respondió ' + res.status);
+  function quizShowResult() {
+    document.getElementById('quiz-questions').style.display = 'none';
+    document.getElementById('quiz-progress-fill').style.width = '100%';
 
-      fields.style.display = 'none';
-      confirm.style.display = 'block';
-      confirm.scrollIntoView({ behavior: 'smooth', block: 'center' });
-    } catch (err) {
-      errorBox.style.display = 'block';
-      submitBtn.disabled = false;
-      submitBtn.textContent = submitLabel;
+    var score = quizAnswers.reduce(function (sum, v) { return sum + v; }, 0);
+    document.getElementById('quiz-score').textContent = score + '/30';
+
+    var tier, desc;
+    if (score <= 12) {
+      tier = 'Fricción estructural';
+      desc = 'Tu empresa está perdiendo clientes y no sabes por qué. No automatices nada sin diagnosticar dónde se producen las fricciones.';
+    } else if (score <= 22) {
+      tier = 'Quiebres activos';
+      desc = 'Algo no está conectado, y te está costando clientes sin que lo notes. Necesitas saber exactamente dónde.';
+    } else {
+      tier = 'Operación orquestada';
+      desc = 'Tu operación funciona mejor que la mayoría. El peligro ahora es no ver la próxima grieta a tiempo.';
     }
+    document.getElementById('quiz-tier').textContent = tier;
+    document.getElementById('quiz-tier-desc').textContent = desc;
+
+    document.getElementById('quiz-result').style.display = 'block';
+  }
+
+  function quizShowForm() {
+    document.getElementById('quiz-result').style.display = 'none';
+    document.getElementById('quiz-form-view').style.display = 'block';
+    // Nota para integración real: en producción, aquí se debe incluir
+    // quizAnswers y el puntaje en el payload que se envía al webhook,
+    // para que el análisis completo generado sea específico a estas respuestas.
+  }
+</script>
+
+<script is:inline>
+(function () {
+  var root = document.getElementById('sysx');
+  var stage = root.querySelector('.sysx-stage');
+  var net = root.querySelector('.sysx-net');
+  var svg = root.querySelector('svg');
+  var card = document.getElementById('sysx-card');
+  var ORANGE = '#E4603B';
+
+  var SCENES = [
+    { name: 'Opening', dur: 3.6 }, { name: 'Canal', dur: 4.4 }, { name: 'Datos', dur: 4.4 },
+    { name: 'Automatizacion', dur: 4.4 }, { name: 'IA', dur: 4.4 }, { name: 'Empleado', dur: 4.6 },
+    { name: 'Cierre', dur: 3.4 }
+  ];
+  var CUES = {}, TOTAL = 0, NAMES = [];
+  SCENES.forEach(function (s) { CUES[s.name] = TOTAL; TOTAL += s.dur; NAMES.push(s.name); });
+  function endOf(n) { var i = NAMES.indexOf(n); return i === NAMES.length - 1 ? TOTAL : CUES[NAMES[i + 1]]; }
+
+  var C = { x: 700, y: 600 }, RX = 500, RY = 430;
+  var A = function (d) { return d * Math.PI / 180; };
+  var NODES = {
+    canal: { label: 'Canal', r: 78, a: -90 }, crm: { label: 'CRM', r: 78, a: -38.6 },
+    erp: { label: 'ERP', r: 78, a: 12.9 }, sop: { label: 'Soporte', r: 78, a: 64.3 },
+    emp: { label: 'Empleado', r: 78, a: 115.7 }, auto: { label: 'Automatización', r: 78, a: 167.1 },
+    ia: { label: 'IA', r: 78, a: 218.6 },
+    cli: { label: 'Cliente', r: 118, a: null }
+  };
+  var ORDER = ['cli', 'canal', 'crm', 'erp', 'sop', 'emp', 'auto', 'ia'];
+  ORDER.forEach(function (id) {
+    var n = NODES[id];
+    n.x = n.a === null ? C.x : C.x + RX * Math.cos(A(n.a));
+    n.y = n.a === null ? C.y : C.y + RY * Math.sin(A(n.a));
   });
+
+  var DATOS_EDGES = { 'crm-cli': 1, 'erp-cli': 1, 'sop-cli': 1 };
+  var EDGES = [
+    ['canal-cli', 'canal', 'cli'], ['crm-cli', 'crm', 'cli'], ['erp-cli', 'erp', 'cli'],
+    ['sop-cli', 'sop', 'cli'], ['emp-cli', 'emp', 'cli'], ['auto-cli', 'auto', 'cli'],
+    ['ia-cli', 'ia', 'cli']
+  ].map(function (e, i) {
+    var a = NODES[e[1]], b = NODES[e[2]];
+    var dx = b.x - a.x, dy = b.y - a.y, len = Math.hypot(dx, dy), ux = dx / len, uy = dy / len, pad = 14;
+    var g = { ax: a.x + ux * (a.r + pad), ay: a.y + uy * (a.r + pad), bx: b.x - ux * (b.r + pad), by: b.y - uy * (b.r + pad), ux: ux, uy: uy, nx: -uy, ny: ux };
+    g.len = Math.hypot(g.bx - g.ax, g.by - g.ay); g.mx = (g.ax + g.bx) / 2; g.my = (g.ay + g.by) / 2;
+    g.cpx = g.mx + g.nx * (g.len * 0.15); g.cpy = g.my + g.ny * (g.len * 0.15);
+    var weight = DATOS_EDGES[e[0]] ? 3.4 : 2.3;
+    return { id: e[0], a: e[1], b: e[2], g: g, seed: (i * 0.137) % 1, weight: weight };
+  });
+  function byId(id) { for (var i = 0; i < EDGES.length; i++) if (EDGES[i].id === id) return EDGES[i]; }
+  function quadPt(p0x, p0y, cpx, cpy, p1x, p1y, t) {
+    var mt = 1 - t;
+    return { x: mt * mt * p0x + 2 * mt * t * cpx + t * t * p1x, y: mt * mt * p0y + 2 * mt * t * cpy + t * t * p1y };
+  }
+  function quadSplit(p0x, p0y, cpx, cpy, p1x, p1y, t) {
+    var q0x = p0x + (cpx - p0x) * t, q0y = p0y + (cpy - p0y) * t;
+    var q1x = cpx + (p1x - cpx) * t, q1y = cpy + (p1y - cpy) * t;
+    var rx = q0x + (q1x - q0x) * t, ry = q0y + (q1y - q0y) * t;
+    return {
+      first: { p0x: p0x, p0y: p0y, cpx: q0x, cpy: q0y, p1x: rx, p1y: ry },
+      second: { p0x: rx, p0y: ry, cpx: q1x, cpy: q1y, p1x: p1x, p1y: p1y }
+    };
+  }
+
+  var cl = function (v, a, b) { return Math.max(a, Math.min(b, v)); };
+  var eOut = function (t) { return 1 - Math.pow(1 - t, 3); };
+  var eIO = function (t) { return t < .5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2; };
+  var eBack = function (t) { var c = 1.70158, c3 = c + 1; return 1 + c3 * Math.pow(t - 1, 3) + c * Math.pow(t - 1, 2); };
+  function tw(t, s, e, ease) { return (ease || eOut)(cl((t - s) / Math.max(.0001, e - s), 0, 1)); }
+  function mixHex(a, b, t) {
+    var pa = [1, 3, 5].map(function (i) { return parseInt(a.substr(i, 2), 16); });
+    var pb = [1, 3, 5].map(function (i) { return parseInt(b.substr(i, 2), 16); });
+    var r = pa.map(function (v, i) { return Math.round(v + (pb[i] - v) * t); });
+    return 'rgb(' + r.join(',') + ')';
+  }
+
+  var CAUSES = [
+    { n: '01', cue: 'Canal', title: 'Canal', desc: 'El cliente cambia de canal y pierde el hilo.', edges: ['canal-cli'] },
+    { n: '02', cue: 'Datos', title: 'Datos', desc: 'CRM, ERP y soporte no se hablan entre sí.', edges: ['crm-cli', 'erp-cli', 'sop-cli'] },
+    { n: '03', cue: 'Automatizacion', title: 'Automatización aislada', desc: 'Cada área automatizó su propio dolor.', edges: ['auto-cli'] },
+    { n: '04', cue: 'IA', title: 'Adopción de IA', desc: 'Se usa IA sin gobernanza compartida.', edges: ['ia-cli'] },
+    { n: '05', cue: 'Empleado', title: 'Experiencia del empleado', desc: 'Si la herramienta es compleja, el cliente paga el costo.', edges: ['emp-cli'] }
+  ];
+  var CAUSE_OF = {};
+  CAUSES.forEach(function (c) {
+    c.edges.forEach(function (id) { CAUSE_OF[id] = c; });
+    c.nodes = {}; c.edges.forEach(function (id) { var e = byId(id); c.nodes[e.a] = 1; c.nodes[e.b] = 1; });
+  });
+
+  var nodeEls = {};
+  ORDER.forEach(function (id) {
+    var n = NODES[id], d = n.r * 2;
+    var el = document.createElement('div');
+    el.className = 'sysx-node';
+    el.style.cssText = 'left:' + (n.x - n.r) + 'px;top:' + (n.y - n.r) + 'px;width:' + d + 'px;height:' + d + 'px';
+    el.innerHTML = '<div class="sysx-ball"></div><div class="sysx-label"' + (n.r > 95 ? ' style="font-size:32px"' : '') + '>' + n.label + '</div>';
+    net.appendChild(el);
+    nodeEls[id] = { el: el, ball: el.querySelector('.sysx-ball') };
+  });
+
+  var NS = 'http://www.w3.org/2000/svg';
+  function mk(t, at) { var e = document.createElementNS(NS, t); for (var k in at) e.setAttribute(k, at[k]); return e; }
+  var edgeEls = EDGES.map(function (e, i) {
+    var g = mk('g', {});
+    var gradId = 'edgeGrad' + i;
+    var grad = mk('linearGradient', {
+      id: gradId, gradientUnits: 'userSpaceOnUse',
+      x1: e.g.ax, y1: e.g.ay, x2: e.g.bx, y2: e.g.by
+    });
+    var stop1 = mk('stop', { offset: '0%', 'stop-color': ORANGE, 'stop-opacity': '0.75' });
+    var stop2 = mk('stop', { offset: '100%', 'stop-color': ORANGE, 'stop-opacity': '0.18' });
+    grad.appendChild(stop1); grad.appendChild(stop2);
+    svg.appendChild(grad);
+    var whole = mk('path', { fill: 'none', stroke: 'url(#' + gradId + ')', 'stroke-width': e.weight, 'stroke-linecap': 'round', 'stroke-dasharray': e.g.len });
+    var dot = mk('circle', { r: 6, fill: ORANGE, opacity: 0 });
+    var s1 = mk('path', { fill: 'none', stroke: 'url(#' + gradId + ')', 'stroke-width': e.weight, 'stroke-linecap': 'round', opacity: 0 });
+    var s2 = mk('path', { fill: 'none', stroke: 'url(#' + gradId + ')', 'stroke-width': e.weight, 'stroke-linecap': 'round', opacity: 0 });
+    var ghost = mk('line', { stroke: 'rgba(30,30,31,0.10)', 'stroke-width': 2, 'stroke-dasharray': '2 9', 'stroke-linecap': 'round', opacity: 0 });
+    var c1 = mk('circle', { r: 5, fill: ORANGE, opacity: 0 });
+    var c2 = mk('circle', { r: 5, fill: ORANGE, opacity: 0 });
+    var ring = mk('circle', { cx: e.g.mx, cy: e.g.my, fill: 'none', stroke: ORANGE, 'stroke-width': 2, opacity: 0, r: 10 });
+    [whole, dot, s1, s2, ghost, c1, c2, ring].forEach(function (x) { g.appendChild(x); });
+    svg.appendChild(g);
+    return { whole: whole, dot: dot, s1: s1, s2: s2, ghost: ghost, c1: c1, c2: c2, ring: ring };
+  });
+
+  // ===== Fotograma de cierre: radios a Cliente (misma curva/degradado que el resto) + etiqueta =====
+  var spokePaths = EDGES.map(function (e, i) {
+    var g = e.g;
+    var path = mk('path', {
+      d: 'M ' + g.ax + ',' + g.ay + ' Q ' + g.cpx + ',' + g.cpy + ' ' + g.bx + ',' + g.by,
+      fill: 'none', stroke: 'url(#edgeGrad' + i + ')', 'stroke-width': e.weight, 'stroke-linecap': 'round', opacity: 0
+    });
+    svg.appendChild(path);
+    return path;
+  });
+
+  function render(T) {
+    stage.style.opacity = 1 - cl((T - (TOTAL - .8)) / .65, 0, 1);
+
+    var active = null;
+    CAUSES.forEach(function (c) { if (T >= CUES[c.cue] && T < endOf(c.cue)) active = c; });
+
+    var resolved = tw(T, CUES.Cierre + .1, CUES.Cierre + 1.0) * (1 - cl((T - (TOTAL - .9)) / .7, 0, 1));
+    spokePaths.forEach(function (path) { path.setAttribute('opacity', resolved); });
+
+    net.style.transform = 'scale(' + (1 + .012 * Math.sin((T / TOTAL) * Math.PI * 2)) + ')';
+
+    ORDER.forEach(function (id, i) {
+      var ap = tw(T, .2 + i * .15, 1.0 + i * .15, eBack);
+      var hot = 0;
+      if (active && active.nodes[id]) hot = tw(T, CUES[active.cue] + .9, CUES[active.cue] + 1.6) * (1 - cl((T - (endOf(active.cue) - .6)) / .5, 0, 1));
+      var effectiveHot = Math.max(hot, resolved);
+      var n = nodeEls[id];
+      n.el.style.opacity = ap;
+      n.el.style.transform = 'scale(' + ((.62 + .38 * ap) * (1 + .05 * effectiveHot)) + ')';
+      n.ball.style.background = mixHex('#FFFFFF', '#FBE8DF', effectiveHot);
+      n.ball.style.borderColor = mixHex('#ECECEB', '#E4603B', effectiveHot);
+      n.ball.style.boxShadow = effectiveHot > .04 ? '0 6px 16px rgba(30,30,31,.08)' : 'none';
+    });
+
+    EDGES.forEach(function (e, i) {
+      var d = tw(T, 1.0 + i * .06, 2.1 + i * .06, eIO);
+      var cs = CUES[CAUSE_OF[e.id].cue];
+      var p = tw(T, cs + 1.0, cs + 1.9);
+      var el = edgeEls[i], g = e.g;
+      if (p < .004) {
+        el.whole.setAttribute('d', 'M ' + g.ax + ',' + g.ay + ' Q ' + g.cpx + ',' + g.cpy + ' ' + g.bx + ',' + g.by);
+        el.whole.setAttribute('opacity', d > 0 ? 1 : 0);
+        el.whole.setAttribute('stroke-dashoffset', g.len * (1 - d));
+        var pu = (T * .19 + e.seed) % 1;
+        var dotPt = quadPt(g.ax, g.ay, g.cpx, g.cpy, g.bx, g.by, pu);
+        el.dot.setAttribute('cx', dotPt.x);
+        el.dot.setAttribute('cy', dotPt.y);
+        el.dot.setAttribute('opacity', d > .995 ? .55 * Math.sin(Math.PI * pu) : 0);
+        [el.s1, el.s2, el.ghost, el.c1, el.c2, el.ring].forEach(function (x) { x.setAttribute('opacity', 0); });
+        return;
+      }
+      el.whole.setAttribute('opacity', 0); el.dot.setAttribute('opacity', 0);
+      var tGap = cl(p * .09, 0, .11);
+      var split1 = quadSplit(g.ax, g.ay, g.cpx, g.cpy, g.bx, g.by, .5 - tGap);
+      var split2 = quadSplit(g.ax, g.ay, g.cpx, g.cpy, g.bx, g.by, .5 + tGap);
+      var f1 = split1.first, f2 = split2.second;
+      var flash = 1 - cl((T - (cs + 1.0)) / .85, 0, 1);
+      el.s1.setAttribute('d', 'M ' + f1.p0x + ',' + f1.p0y + ' Q ' + f1.cpx + ',' + f1.cpy + ' ' + f1.p1x + ',' + f1.p1y);
+      el.s2.setAttribute('d', 'M ' + f2.p0x + ',' + f2.p0y + ' Q ' + f2.cpx + ',' + f2.cpy + ' ' + f2.p1x + ',' + f2.p1y);
+      el.s1.setAttribute('opacity', 1); el.s2.setAttribute('opacity', 1);
+      el.ghost.setAttribute('x1', f1.p1x); el.ghost.setAttribute('y1', f1.p1y);
+      el.ghost.setAttribute('x2', f2.p0x); el.ghost.setAttribute('y2', f2.p0y); el.ghost.setAttribute('opacity', 1);
+      el.c1.setAttribute('cx', f1.p1x); el.c1.setAttribute('cy', f1.p1y); el.c1.setAttribute('opacity', .28 + .6 * flash);
+      el.c2.setAttribute('cx', f2.p0x); el.c2.setAttribute('cy', f2.p0y); el.c2.setAttribute('opacity', .28 + .6 * flash);
+      var midPt = quadPt(g.ax, g.ay, g.cpx, g.cpy, g.bx, g.by, .5);
+      el.ring.setAttribute('cx', midPt.x); el.ring.setAttribute('cy', midPt.y);
+      el.ring.setAttribute('r', 10 + 36 * (1 - flash)); el.ring.setAttribute('opacity', .5 * flash);
+    });
+
+    if (resolved > .01) {
+      var fadeMul = 1 - resolved;
+      edgeEls.forEach(function (el) {
+        [el.whole, el.dot, el.s1, el.s2, el.ghost, el.c1, el.c2, el.ring].forEach(function (x) {
+          var cur = parseFloat(x.getAttribute('opacity') || '0');
+          x.setAttribute('opacity', cur * fadeMul);
+        });
+      });
+    }
+
+    if (active) {
+      card.classList.add('sysx-active');
+      if (card.dataset.cue !== active.cue) {
+        card.dataset.cue = active.cue;
+        card.querySelector('.sysx-num').textContent = active.n;
+        card.querySelector('.sysx-title').textContent = active.title;
+        card.querySelector('.sysx-desc').textContent = active.desc;
+      }
+    } else { card.classList.remove('sysx-active'); }
+  }
+
+  var CROP = { x: 72, y: 16, w: 1256, h: 1168 };
+  function fit() {
+    var s = root.clientWidth / CROP.w;
+    stage.style.transform = 'scale(' + s + ') translate(' + (-CROP.x) + 'px,' + (-CROP.y) + 'px)';
+  }
+  fit();
+  if (window.ResizeObserver) new ResizeObserver(fit).observe(root); else window.addEventListener('resize', fit);
+
+  var reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (reduceMotion) { render(CUES.Cierre + 2); return; }
+
+  var clock = 0, prev = null, visible = true;
+  if (window.IntersectionObserver) new IntersectionObserver(function (en) { visible = en[0].isIntersecting; }).observe(root);
+  function frame(ts) {
+    if (prev === null) prev = ts;
+    var dt = Math.min(.1, (ts - prev) / 1000); prev = ts;
+    if (visible) { clock = (clock + dt) % TOTAL; render(clock); }
+    requestAnimationFrame(frame);
+  }
+  requestAnimationFrame(frame);
+})();
+</script>
+
+<script is:inline>
+  /* ==========================================================================
+     PENDIENTE — CONEXIÓN REAL (FASE 3)
+
+     El formulario está SIMULADO: al enviar solo muestra la confirmación en
+     pantalla (mismo comportamiento que el mockup). NO hace POST a ningún
+     webhook y NO dispara ningún evento de conversión.
+
+     En la Fase 3, reemplazar este handler por el envío real:
+       1. POST a WEBHOOK_URL (definido en el frontmatter) con
+          nombre / email / telefono / empresa / website  +  las 15 respuestas
+          del quiz (window.quizAnswers)  +  puntaje total  +  tier.
+       2. fbq('track', 'Lead', { content_name: 'checklist_costuras_descarga' }).
+       3. Estado de carga en el botón + manejo de error: mostrar #form-error y
+          reactivar el botón si el webhook falla.
+     ========================================================================== */
+  (function () {
+    var form = document.getElementById('lead-form');
+    if (!form) return;
+    form.addEventListener('submit', function (event) {
+      event.preventDefault();
+      document.getElementById('form-fields').style.display = 'none';
+      document.getElementById('confirm').style.display = 'block';
+    });
+  })();
 </script>
 
 </body>

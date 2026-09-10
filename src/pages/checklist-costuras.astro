@@ -6,8 +6,9 @@
 // design system (_ds), Phosphor Icons, el Meta Pixel y el snippet de GA4.
 import { DS_BASE } from '../lib/constants';
 
-// FASE 3 (pendiente): endpoint del webhook. Hoy NO se usa — el formulario está
-// simulado (ver el bloque 'PENDIENTE — CONEXIÓN REAL' al final del <body>).
+// Endpoint del webhook de n8n (workflow "Recepción y Entrega"). Recibe el lead
+// + las 15 respuestas del quiz, calcula puntaje/tier, genera el informe PDF y lo
+// envía por correo. El envío real está al final del <body> (script define:vars).
 const WEBHOOK_URL = 'https://brainmap-n8n2.onq6ef.easypanel.host/webhook/checklist-costuras';
 ---
 
@@ -229,6 +230,7 @@ h2{font-family:var(--font-display);font-weight:600;font-size:clamp(26px,3vw,36px
 .trust-row span{font-size:11.5px;color:var(--color-text-muted);display:flex;align-items:center;gap:6px}
 .trust-row .dot{width:5px;height:5px;border-radius:50%;background:var(--color-accent)}
 .form-error{display:none; background:var(--color-error-subtle); color:var(--color-error); border:1px solid var(--color-error); border-radius:var(--radius-md); padding:12px 16px; font-size:13.5px; line-height:1.5; margin:0 0 16px; text-align:center;}
+.form-notice{display:none; background:var(--color-accent-subtle); color:var(--color-text-secondary); border:1px solid var(--color-border-accent); border-radius:var(--radius-md); padding:12px 16px; font-size:13.5px; line-height:1.5; margin:0 0 16px; text-align:center;}
 footer{padding:28px 0;border-top:1px solid var(--color-border);text-align:center}
 footer p{font-size:12px;color:var(--color-text-muted);margin:0}
 
@@ -434,11 +436,14 @@ src="https://www.facebook.com/tr?id=1086272037394340&ev=PageView&noscript=1"
 
       <!-- ===== FORMULARIO (gate) ===== -->
       <div id="quiz-form-view" class="quiz-view" style="display:none">
-        <div style="text-align:center"><span class="eyebrow">Último paso</span></div>
-        <h2>¿A dónde te lo enviamos?</h2>
-        <p class="sub">Tu análisis completo, con recomendaciones específicas para tu empresa.</p>
+        <div id="quiz-form-header">
+          <div style="text-align:center"><span class="eyebrow">Último paso</span></div>
+          <h2>¿A dónde te lo enviamos?</h2>
+          <p class="sub">Tu análisis completo, con recomendaciones específicas para tu empresa.</p>
+        </div>
 
         <div id="form-error" class="form-error">No pudimos enviar tu análisis. Por favor, inténtalo de nuevo en unos segundos.</div>
+        <div id="form-notice" class="form-notice">Ya te enviamos tu análisis hace un momento — revisa tu correo (o spam / promociones), o vuelve a intentar en unos minutos.</div>
 
         <form id="lead-form" novalidate>
           <div id="form-fields">
@@ -572,9 +577,8 @@ src="https://www.facebook.com/tr?id=1086272037394340&ev=PageView&noscript=1"
   function quizShowForm() {
     document.getElementById('quiz-result').style.display = 'none';
     document.getElementById('quiz-form-view').style.display = 'block';
-    // Nota para integración real: en producción, aquí se debe incluir
-    // quizAnswers y el puntaje en el payload que se envía al webhook,
-    // para que el análisis completo generado sea específico a estas respuestas.
+    // El envío (script al final del <body>) toma window.quizAnswers y lo manda
+    // como `respuestas` en el POST, para que el informe sea específico a estas 15 respuestas.
   }
 </script>
 
@@ -817,29 +821,76 @@ src="https://www.facebook.com/tr?id=1086272037394340&ev=PageView&noscript=1"
 })();
 </script>
 
-<script is:inline>
-  /* ==========================================================================
-     PENDIENTE — CONEXIÓN REAL (FASE 3)
-
-     El formulario está SIMULADO: al enviar solo muestra la confirmación en
-     pantalla (mismo comportamiento que el mockup). NO hace POST a ningún
-     webhook y NO dispara ningún evento de conversión.
-
-     En la Fase 3, reemplazar este handler por el envío real:
-       1. POST a WEBHOOK_URL (definido en el frontmatter) con
-          nombre / email / telefono / empresa / website  +  las 15 respuestas
-          del quiz (window.quizAnswers)  +  puntaje total  +  tier.
-       2. fbq('track', 'Lead', { content_name: 'checklist_costuras_descarga' }).
-       3. Estado de carga en el botón + manejo de error: mostrar #form-error y
-          reactivar el botón si el webhook falla.
-     ========================================================================== */
+<script define:vars={{ WEBHOOK_URL }}>
+  /* Envío real del formulario: POST a n8n con el lead + las 15 respuestas del
+     quiz. El evento de conversión y la confirmación solo se muestran si el
+     webhook responde OK; si falla, se muestra #form-error y se reactiva el botón. */
   (function () {
     var form = document.getElementById('lead-form');
     if (!form) return;
-    form.addEventListener('submit', function (event) {
+
+    var header = document.getElementById('quiz-form-header');
+    var fields = document.getElementById('form-fields');
+    var trustRow = document.getElementById('quiz-trust-row');
+    var confirmBox = document.getElementById('confirm');
+    var errorBox = document.getElementById('form-error');
+    var noticeBox = document.getElementById('form-notice');
+    var submitBtn = form.querySelector('.btn-primary');
+    var submitLabel = submitBtn.textContent;
+
+    function resetButton() {
+      submitBtn.disabled = false;
+      submitBtn.textContent = submitLabel;
+    }
+
+    form.addEventListener('submit', async function (event) {
       event.preventDefault();
-      document.getElementById('form-fields').style.display = 'none';
-      document.getElementById('confirm').style.display = 'block';
+      errorBox.style.display = 'none';
+      noticeBox.style.display = 'none';
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Enviando…';
+
+      var payload = {
+        nombre: form.nombre.value.trim(),
+        email: form.email.value.trim(),
+        telefono: form.telefono.value.trim(),
+        empresa: form.empresa.value.trim(),
+        website: form.website.value,
+        respuestas: (window.quizAnswers || []).map(Number),
+      };
+
+      try {
+        var res = await fetch(WEBHOOK_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload),
+        });
+        var data = await res.json().catch(function () { return {}; });
+
+        if (res.ok) {
+          if (typeof window.fbq === 'function') {
+            window.fbq('track', 'Lead', { content_name: 'checklist_costuras_descarga' });
+          }
+          header.style.display = 'none';
+          fields.style.display = 'none';
+          if (trustRow) trustRow.style.display = 'none';
+          confirmBox.style.display = 'block';
+          confirmBox.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          return;
+        }
+
+        // Lead ya registrado en un envío reciente: no es un error, solo aviso.
+        if (res.status === 429 || data.code === 'RECENT_SUBMISSION') {
+          noticeBox.style.display = 'block';
+          resetButton();
+          return;
+        }
+
+        throw new Error('Webhook respondió ' + res.status);
+      } catch (err) {
+        errorBox.style.display = 'block';
+        resetButton();
+      }
     });
   })();
 </script>

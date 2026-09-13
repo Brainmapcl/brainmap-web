@@ -58,6 +58,8 @@ export function NavBar({ breadcrumb, badge }) {
   const { isMobile } = useViewport();
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [solOpen, setSolOpen] = useState(false);
+  const [solMobOpen, setSolMobOpen] = useState(false);
   useEffect(() => {
     const fn = () => setScrolled(window.scrollY > 24);
     window.addEventListener('scroll', fn, { passive: true });
@@ -69,10 +71,21 @@ export function NavBar({ breadcrumb, badge }) {
     return () => { document.body.style.overflow = ''; };
   }, [isMobile, menuOpen]);
 
-  const links = [
+  /* "Soluciones" abre un desplegable con los 4 casos de uso; el resto de los
+     links se mantiene tal cual, antes y después de él. */
+  const linksBefore = [
     { lbl:'Servicios', href:`${HOME}#servicios` },
+  ];
+  const linksAfter = [
     { lbl:'Nosotros',   href:'/nosotros' },
     { lbl:'Blog',       href:'/blog' },
+  ];
+
+  const SOLUCIONES = [
+    { lbl:'Funnel de ventas automatizado', href:'/soluciones#funnel' },
+    { lbl:'Agente de atención al cliente', href:'/soluciones#atencion' },
+    { lbl:'Agente de cobranza', href:'/soluciones#cobranza' },
+    { lbl:'Agente de seguimiento de proyectos', href:'/soluciones#proyectos' },
   ];
 
   const lk = (l, mobile) => (
@@ -145,8 +158,45 @@ export function NavBar({ breadcrumb, badge }) {
         </button>
       ) : (
         <>
-          <div style={{ display:'flex', gap:36 }}>
-            {links.map(l => lk(l))}
+          <div style={{ display:'flex', gap:36, alignItems:'center' }}>
+            {linksBefore.map(l => lk(l))}
+
+            <div onMouseEnter={() => setSolOpen(true)} onMouseLeave={() => setSolOpen(false)}
+              style={{ position:'relative', display:'flex', alignItems:'center', gap:5, cursor:'pointer' }}>
+              <a href="/soluciones"
+                style={{ fontFamily:'var(--font-body)', fontSize:14, fontWeight:500,
+                          color: solOpen ? 'var(--color-text-primary)' : 'var(--color-text-secondary)',
+                          textDecoration:'none', transition:'color .2s ease' }}>Soluciones</a>
+              <i className="ph ph-caret-down" style={{ fontSize:11, color:'var(--color-text-muted)',
+                transform: solOpen ? 'rotate(180deg)' : 'none', transition:'transform .2s ease' }} />
+              <div style={{
+                position:'absolute', top:'100%', left:-18, paddingTop:14,
+                opacity: solOpen ? 1 : 0, visibility: solOpen ? 'visible' : 'hidden',
+                transform: solOpen ? 'translateY(0)' : 'translateY(-6px)',
+                transition:'opacity .2s ease, transform .2s ease, visibility .2s',
+              }}>
+                <div style={{
+                  minWidth:286, background:'rgba(251,251,250,.94)',
+                  backdropFilter:'blur(18px) saturate(180%)', WebkitBackdropFilter:'blur(18px) saturate(180%)',
+                  border:'1px solid rgba(255,255,255,.65)', borderRadius:'var(--radius-lg)',
+                  boxShadow:'var(--shadow-lg)', padding:'10px', display:'flex', flexDirection:'column', gap:2,
+                }}>
+                  {SOLUCIONES.map(s => (
+                    <a key={s.lbl} href={s.href} onClick={() => setSolOpen(false)}
+                      style={{ fontFamily:'var(--font-body)', fontSize:13.5, fontWeight:500,
+                                color:'var(--color-text-secondary)', textDecoration:'none',
+                                padding:'10px 13px', borderRadius:'var(--radius-md, 12px)',
+                                transition:'background .18s ease, color .18s ease' }}
+                      onMouseEnter={e=>{ e.currentTarget.style.background='var(--color-accent-subtle)'; e.currentTarget.style.color='var(--color-text-primary)'; }}
+                      onMouseLeave={e=>{ e.currentTarget.style.background='transparent'; e.currentTarget.style.color='var(--color-text-secondary)'; }}>
+                      {s.lbl}
+                    </a>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            {linksAfter.map(l => lk(l))}
           </div>
 
           <a href="#hablemos"
@@ -175,7 +225,31 @@ export function NavBar({ breadcrumb, badge }) {
         boxShadow: menuOpen ? '0 16px 40px rgba(0,0,0,.12)' : 'none',
       }}>
         <div style={{ display:'flex', flexDirection:'column', padding:'8px 24px 28px' }}>
-          {links.map(l => lk(l, true))}
+          {linksBefore.map(l => lk(l, true))}
+
+          <div style={{ borderBottom:'1px solid var(--color-border)' }}>
+            <div onClick={() => setSolMobOpen(o => !o)} style={{
+              display:'flex', alignItems:'center', justifyContent:'space-between',
+              padding:'15px 2px', cursor:'pointer',
+            }}>
+              <span style={{ fontFamily:'var(--font-subtitle)', fontSize:21, fontWeight:600, color:'var(--color-text-primary)' }}>Soluciones</span>
+              <i className="ph ph-caret-down" style={{ fontSize:16, color:'var(--color-text-muted)',
+                transform: solMobOpen ? 'rotate(180deg)' : 'none', transition:'transform .2s ease' }} />
+            </div>
+            <div style={{ maxHeight: solMobOpen ? 320 : 0, overflow:'hidden', transition:'max-height .3s cubic-bezier(.25,.46,.45,.94)' }}>
+              <div style={{ display:'flex', flexDirection:'column', gap:2, padding:'2px 0 16px 2px' }}>
+                {SOLUCIONES.map(s => (
+                  <a key={s.lbl} href={s.href} onClick={() => setMenuOpen(false)}
+                    style={{ fontFamily:'var(--font-body)', fontSize:15, fontWeight:500,
+                              color:'var(--color-text-secondary)', textDecoration:'none', padding:'9px 0' }}>
+                    {s.lbl}
+                  </a>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {linksAfter.map(l => lk(l, true))}
           <a href="#hablemos" onClick={() => setMenuOpen(false)}
             style={{ marginTop:20, fontFamily:'var(--font-body)', fontSize:15, fontWeight:600,
                       color:'#fff', background:'var(--color-text-primary)',

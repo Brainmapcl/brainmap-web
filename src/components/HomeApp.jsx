@@ -3,7 +3,7 @@ import { NavBar, Footer, ChatOverlay, useKarinChat } from './shared.jsx';
 import {
   HeroSection, DiagnosisSection,
   ServicesSection, AdvancedGridSection,
-  ContactSection,
+  SolutionsSection, ContactSection,
 } from './home.jsx';
 
 export default function HomeApp({ heroImage }) {
@@ -16,6 +16,7 @@ export default function HomeApp({ heroImage }) {
       <DiagnosisSection />
       <ServicesSection />
       <AdvancedGridSection />
+      <SolutionsSection />
       <ContactSection chat={chat} />
       <Footer />
       {chat.open && <ChatOverlay chat={chat} />}

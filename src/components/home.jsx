@@ -4,6 +4,7 @@
    module. Internal links rewritten from the *.dc.html prototype
    filenames to their Astro routes.
    ───────────────────────────────────────────────────────────── */
+import { Fragment } from 'react';
 import { DS_BASE } from '../lib/constants';
 import { useReveal, revStyle, useViewport } from './shared.jsx';
 import { LeadFormFields } from './LeadFormFields.jsx';
@@ -364,6 +365,201 @@ export function AdvancedGridSection() {
               </div>
             );
           })}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ══════════════════════════════════════════════════════════
+   SOLUCIONES EXISTENTES — casos de uso adoptables
+══════════════════════════════════════════════════════════ */
+const USE_CASES = [
+  { id:'funnel', icon:'ph-funnel', title:'Funnel de ventas automatizado',
+    text:'Captura, califica y agenda sin intervención manual. Cada lead entra al CRM con contexto y siguiente paso definido.',
+    flow:['Lead entra','Calificación','Agenda'], metric:'Respuesta en segundos, no en días' },
+  { id:'atencion', icon:'ph-headset', title:'Agente de atención al cliente',
+    text:'Resuelve consultas frecuentes con el tono de tu marca y escala a una persona solo cuando el caso lo amerita.',
+    flow:['Consulta','Resolución','Escalamiento'], metric:'Atención continua, sin colas' },
+  { id:'cobranza', icon:'ph-receipt', title:'Agente de cobranza',
+    text:'Recuerda, negocia y registra cada compromiso de pago con trazabilidad completa y sin fricción incómoda.',
+    flow:['Recordatorio','Acuerdo','Registro'], metric:'Cobro empático y trazable' },
+  { id:'proyectos', icon:'ph-kanban', title:'Agente de seguimiento de proyectos',
+    text:'Consolida avances, detecta bloqueos y reporta el estado real del proyecto sin reuniones de actualización.',
+    flow:['Avance','Alerta','Reporte'], metric:'Estado real, siempre al día' },
+];
+
+/* Gráfica conceptual de autogestión: bucle cliente → agente → resolución */
+function SelfServiceDiagram({ compact }) {
+  const [ref, vis] = useReveal(120);
+  const size = compact ? 250 : 300;
+  const orbit = [
+    { icon:'ph-user', lbl:'Cliente', a:-90 },
+    { icon:'ph-chat-circle-dots', lbl:'Consulta', a:-18 },
+    { icon:'ph-check-circle', lbl:'Resuelto', a:54 },
+    { icon:'ph-arrows-clockwise', lbl:'Aprende', a:126 },
+    { icon:'ph-database', lbl:'Sistemas', a:198 },
+  ];
+  const R = size / 2 - 30;
+  return (
+    <div ref={ref} style={{ position:'relative', width:size, height:size, flexShrink:0, ...revStyle(vis) }}>
+      <div style={{
+        position:'absolute', inset:0, borderRadius:'50%',
+        border:'1px dashed var(--color-border-accent)', opacity:.75,
+      }} />
+      <div style={{
+        position:'absolute', inset:'50% auto auto 50%', transform:'translate(-50%,-50%)',
+        width: compact ? 92 : 108, height: compact ? 92 : 108, borderRadius:'50%',
+        background:'var(--color-canvas)', boxShadow:'var(--shadow-neumorph), var(--shadow-glow-sm)',
+        display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center', gap:3,
+      }}>
+        <i className="ph-duotone ph-arrows-clockwise" style={{ fontSize: compact ? 22 : 26, color:'var(--color-accent-intense)' }} />
+        <span style={{ fontFamily:'var(--font-body)', fontSize:10, fontWeight:600,
+                        letterSpacing:'.06em', textTransform:'uppercase', color:'var(--color-text-muted)' }}>Autogestión</span>
+      </div>
+      {orbit.map((o, i) => {
+        const rad = o.a * Math.PI / 180;
+        return (
+          <div key={o.lbl} style={{
+            position:'absolute',
+            left: `calc(50% + ${Math.cos(rad) * R}px)`,
+            top:  `calc(50% + ${Math.sin(rad) * R}px)`,
+            transform:'translate(-50%,-50%)',
+            display:'flex', flexDirection:'column', alignItems:'center', gap:5,
+            opacity: vis ? 1 : 0,
+            transition:`opacity .5s var(--ease-out) ${i * 90}ms`,
+          }}>
+            <div style={{
+              width:44, height:44, borderRadius:'50%', background:'var(--color-canvas)',
+              boxShadow:'var(--shadow-neumorph-sm)',
+              display:'flex', alignItems:'center', justifyContent:'center',
+            }}>
+              <i className={`ph ${o.icon}`} style={{ fontSize:19, color:'var(--color-text-primary)' }} />
+            </div>
+            <span style={{ fontFamily:'var(--font-body)', fontSize:11, fontWeight:500,
+                            color:'var(--color-text-muted)', whiteSpace:'nowrap' }}>{o.lbl}</span>
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
+function UseCaseCard({ uc, delay }) {
+  const [ref, vis] = useReveal(delay);
+  const { isMobile } = useViewport();
+  return (
+    <a ref={ref} href={`/soluciones#${uc.id}`} style={{
+      background:'var(--color-canvas)', borderRadius:'var(--radius-2xl)',
+      padding: isMobile ? '26px' : '32px', boxShadow:'var(--shadow-neumorph)',
+      display:'flex', flexDirection:'column', gap:16, textDecoration:'none',
+      transition:'transform .25s ease, box-shadow .3s ease', ...revStyle(vis),
+    }}
+      onMouseEnter={e=>{ e.currentTarget.style.transform='translateY(-4px)'; e.currentTarget.style.boxShadow='var(--shadow-neumorph-lg), var(--shadow-glow-sm)'; }}
+      onMouseLeave={e=>{ e.currentTarget.style.transform=''; e.currentTarget.style.boxShadow='var(--shadow-neumorph)'; }}>
+      <div style={{ display:'flex', alignItems:'center', gap:14 }}>
+        <div style={{
+          width:48, height:48, borderRadius:'var(--radius-lg)', flexShrink:0,
+          background:'var(--color-accent-subtle)',
+          display:'flex', alignItems:'center', justifyContent:'center',
+        }}>
+          <i className={`ph-duotone ${uc.icon}`} style={{ fontSize:25, color:'var(--color-accent-intense)' }} />
+        </div>
+        <h3 style={{
+          fontFamily:'var(--font-subtitle)', fontSize:17.5, fontWeight:600,
+          letterSpacing:'-0.015em', lineHeight:1.24, color:'var(--color-text-primary)', margin:0,
+        }}>{uc.title}</h3>
+      </div>
+      <p style={{ fontFamily:'var(--font-body)', fontSize:14.5, lineHeight:1.65,
+                   color:'var(--color-text-secondary)', margin:0 }}>{uc.text}</p>
+      <div style={{ display:'flex', alignItems:'center', gap:7, flexWrap:'wrap' }}>
+        {uc.flow.map((f, i) => (
+          <Fragment key={f}>
+            {i > 0 && <i className="ph ph-arrow-right" style={{ fontSize:11, color:'var(--color-text-muted)' }} />}
+            <span style={{
+              fontFamily:'var(--font-body)', fontSize:11.5, fontWeight:500,
+              color:'var(--color-text-secondary)', background:'var(--color-canvas-subtle)',
+              borderRadius:9999, padding:'5px 12px', whiteSpace:'nowrap',
+            }}>{f}</span>
+          </Fragment>
+        ))}
+      </div>
+      <div style={{
+        display:'flex', alignItems:'center', justifyContent:'space-between', gap:12,
+        borderTop:'1px solid var(--color-border)', paddingTop:15, marginTop:'auto',
+      }}>
+        <span style={{ fontFamily:'var(--font-body)', fontSize:12.5, color:'var(--color-text-muted)' }}>{uc.metric}</span>
+        <span style={{ fontFamily:'var(--font-body)', fontSize:13, fontWeight:600,
+                        color:'var(--color-text-primary)', display:'flex', alignItems:'center', gap:6, whiteSpace:'nowrap' }}>
+          Ver detalle <i className="ph ph-arrow-up-right" style={{ fontSize:13 }} />
+        </span>
+      </div>
+    </a>
+  );
+}
+
+export function SolutionsSection() {
+  const [ref, vis] = useReveal(0);
+  const { width, isMobile } = useViewport();
+  const cols = width <= 900 ? '1fr' : 'repeat(2,1fr)';
+  return (
+    <section id="soluciones" style={{ padding: isMobile ? '72px 24px' : '120px 56px', background:'var(--color-canvas)', position:'relative', zIndex:1 }}>
+      <div style={{ maxWidth:1280, margin:'0 auto', display:'flex', flexDirection:'column', gap: isMobile ? 44 : 64 }}>
+        <div ref={ref} style={{
+          display:'flex', flexDirection: isMobile ? 'column' : 'row',
+          alignItems:'center', gap: isMobile ? 34 : 72, ...revStyle(vis),
+        }}>
+          <div style={{ flex:1, minWidth:0 }}>
+            <span style={{
+              fontFamily:'var(--font-body)', fontSize:11, fontWeight:600,
+              letterSpacing:'.08em', textTransform:'uppercase',
+              color:'var(--color-accent-intense)', background:'var(--color-accent-subtle)',
+              border:'1px solid var(--color-border-accent)', padding:'4px 14px', borderRadius:9999,
+            }}>Listas para adoptar</span>
+            <h2 style={{
+              fontFamily:'var(--font-display)', fontSize: isMobile ? 'clamp(28px,8vw,36px)' : 'clamp(34px,3.4vw,48px)',
+              fontWeight:700, letterSpacing:'-0.034em', lineHeight:1.1,
+              color:'var(--color-text-primary)', margin:'20px 0 0',
+            }}>Soluciones existentes</h2>
+            <p style={{
+              fontFamily:'var(--font-body)', fontSize: isMobile ? 15.5 : 17, lineHeight:1.62,
+              color:'var(--color-text-secondary)', margin:'18px 0 0', maxWidth:560, textWrap:'pretty',
+            }}>
+              No todo se construye desde cero. Estos son sistemas que ya operan y que tu empresa puede
+              adoptar rápido para <span style={{ color:'var(--color-text-accent)' }}>liberar tiempo de tu equipo</span> y
+              devolverle a tus clientes la capacidad de resolver por sí mismos, en el momento en que lo necesitan.
+            </p>
+            <div style={{ display:'flex', flexWrap:'wrap', gap:14, marginTop:28 }}>
+              <a href="/soluciones" style={{
+                fontFamily:'var(--font-body)', fontSize:14.5, fontWeight:600,
+                color:'#fff', background:'var(--color-text-primary)', textDecoration:'none',
+                borderRadius:'var(--radius-full)', padding:'14px 30px',
+                display:'inline-flex', alignItems:'center', gap:9,
+                transition:'transform .2s ease, box-shadow .3s ease',
+              }}
+                onMouseEnter={e=>{ e.currentTarget.style.transform='translateY(-2px)'; e.currentTarget.style.boxShadow='var(--shadow-lg)'; }}
+                onMouseLeave={e=>{ e.currentTarget.style.transform=''; e.currentTarget.style.boxShadow='none'; }}>
+                Ver soluciones en detalle <i className="ph ph-arrow-right" style={{ fontSize:15 }} />
+              </a>
+              <a href="#hablemos" style={{
+                fontFamily:'var(--font-body)', fontSize:14.5, fontWeight:500,
+                color:'var(--color-text-primary)', background:'var(--color-canvas)',
+                borderRadius:'var(--radius-full)', padding:'14px 28px',
+                textDecoration:'none', display:'inline-flex', alignItems:'center',
+                boxShadow:'var(--shadow-neumorph)',
+                transition:'box-shadow .25s ease, transform .2s ease',
+              }}
+                onMouseEnter={e=>{ e.currentTarget.style.transform='translateY(-2px)'; e.currentTarget.style.boxShadow='var(--shadow-neumorph-lg)'; }}
+                onMouseLeave={e=>{ e.currentTarget.style.transform=''; e.currentTarget.style.boxShadow='var(--shadow-neumorph)'; }}>
+                Evaluar mi caso
+              </a>
+            </div>
+          </div>
+          <SelfServiceDiagram compact={isMobile} />
+        </div>
+
+        <div style={{ display:'grid', gridTemplateColumns: cols, gap:24 }}>
+          {USE_CASES.map((uc, i) => <UseCaseCard key={uc.id} uc={uc} delay={i * 90} />)}
         </div>
       </div>
     </section>
